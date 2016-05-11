@@ -1,0 +1,19 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix ex: <http://example.com/ns#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<#TriplesMap1>
+    rr:logicalTable [ rr:tableName "DEPT" ];
+    rr:subjectMap [
+        rr:template "http://data.example.com/site/{LOC}";
+		rr:class ex:Site;
+    ];
+	rr:predicateObjectMap [
+        rr:predicate ex:test;
+        rr:objectMap [ 
+			rr:template "\\{\\{\\{ \\\\o/ {LOC} \\\\o/ \\}\\}\\}"; 
+			rr:termType rr:Literal;
+		];
+    ]
+	.
+	

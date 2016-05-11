@@ -1,0 +1,6 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ex: <http://example.com/ns#> .
+<http://data.example.com/department/10> rdf:type ex:Department.
+<http://data.example.com/department/10> ex:name "APPSERVER".
+<http://data.example.com/department/10> ex:location "NEW YORK".
+<http://data.example.com/department/10> ex:staff 1.

@@ -1,0 +1,7 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:j.0="http://example.com/ns#">
+  <j.0:Site rdf:about="http://data.example.com/site/NEW%20YORK">
+    <j.0:test>{{{ \o/ NEW YORK \o/ }}}</j.0:test>
+  </j.0:Site>
+</rdf:RDF>
