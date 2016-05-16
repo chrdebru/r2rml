@@ -15,7 +15,7 @@ import r2rml.engine.R2RML;
  * TODO: Implement inferring datatypes
  * 
  * @author Christophe Debruyne
- * @version 0.1
+ * @version 0.2
  *
  */
 public class ObjectMap extends TermMap {
@@ -127,6 +127,10 @@ public class ObjectMap extends TermMap {
 		 * rr:IRI, otherwise*/
 
 		if(isColumnValuedTermMap() || datatypes.size() > 0 || languages.size() > 0) 
+			return R2RML.LITERAL;
+		
+		/* We assume that functions are also by default literals */
+		if(isFunctionValuedTermMap())
 			return R2RML.LITERAL;
 
 		return R2RML.IRI;

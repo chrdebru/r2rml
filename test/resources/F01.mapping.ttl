@@ -1,0 +1,39 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix ex: <http://example.com/ns#> .
+@prefix rrf: <http://kdeg.scss.tcd.ie/ns/rrf#>
+
+<#TriplesMap1>
+    rr:logicalTable [ rr:tableName "EMP" ];
+    rr:subjectMap [
+        rr:template "http://data.example.com/employee/{EMPNO}";
+        rr:class ex:Employee;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:name;
+        rr:objectMap [ rr:column "ENAME" ];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:test;
+        rr:objectMap [
+	        rrf:functionCall [
+	 			rrf:function <#Concat> ;
+	 			rrf:parameterBindings (
+	 				[ rr:column "ENAME" ]
+	 				[ rr:column "EMPNO" ]
+	 			) ;
+	 		] ; 
+	 	]
+    ]    
+    .
+    
+<#Concat>
+	rrf:functionName "concat" ;
+	rrf:functionBody """
+		function concat(var1, var2) {
+		return var1 + " " + var2 ;
+	}
+	""" ;
+.
+	
+<#a> rr:objectMap <#b> .
+<#b> rr:column "ENAME" .

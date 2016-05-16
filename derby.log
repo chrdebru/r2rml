@@ -1,0 +1,16 @@
+----------------------------------------------------------------
+Mon May 16 13:45:37 IST 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0154-b999-ad38-00000660a100 
+on database directory memory:/Users/chrdebru/GITHUB/r2rml/testing with class loader sun.misc.Launcher$AppClassLoader@5451c3a8 
+Loaded from file:/Users/chrdebru/.m2/repository/org/apache/derby/derby/10.12.1.1/derby-10.12.1.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_45-b14
+user.dir=/Users/chrdebru/GITHUB/r2rml
+os.name=Mac OS X
+os.arch=x86_64
+os.version=10.11.3
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Mon May 16 13:45:39 IST 2016:
+Shutting down instance a816c00e-0154-b999-ad38-00000660a100 on database directory memory:/Users/chrdebru/GITHUB/r2rml/testing with class loader sun.misc.Launcher$AppClassLoader@5451c3a8 

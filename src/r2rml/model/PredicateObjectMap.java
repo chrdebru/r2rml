@@ -8,12 +8,13 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.log4j.Logger;
 
 import r2rml.engine.R2RML;
+import r2rml.engine.RRF;
 
 /**
  * PredicateObjectMap Class.
  * 
  * @author Christophe Debruyne
- * @version 0.1
+ * @version 0.2
  *
  */
 public class PredicateObjectMap extends R2RMLResource {
@@ -117,7 +118,8 @@ public class PredicateObjectMap extends R2RMLResource {
 			 */
 			boolean isOM = r.hasProperty(R2RML.column) 
 					|| r.hasProperty(R2RML.constant) 
-					|| r.hasProperty(R2RML.template);
+					|| r.hasProperty(R2RML.template)
+					|| r.hasProperty(RRF.functionCall);
 			boolean isROM = r.hasProperty(R2RML.joinCondition);
 
 			// If it plays the roles of a OM, create OM

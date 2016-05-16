@@ -1,6 +1,7 @@
 package r2rml.model;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,14 +10,19 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.script.ScriptException;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.enhanced.UnsupportedPolymorphismException;
 import org.apache.jena.iri.IRI;
 import org.apache.jena.iri.IRIFactory;
+import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.XSD;
 import org.apache.log4j.Logger;
 
@@ -24,12 +30,14 @@ import r2rml.database.Row;
 import r2rml.engine.R2RML;
 import r2rml.engine.R2RMLException;
 import r2rml.engine.R2RMLTypeMapper;
+import r2rml.engine.RRF;
+import r2rml.function.JSEnv;
 
 /**
  * TermMap Class.
  * 
  * @author Christophe Debruyne
- * @version 0.1
+ * @version 0.2
  *
  */
 public abstract class TermMap extends R2RMLResource {
@@ -52,6 +60,7 @@ public abstract class TermMap extends R2RMLResource {
 	private String template;
 	private RDFNode constant;
 	private String column;
+	private FunctionCall functionCall;
 
 	protected String language = null;
 	protected Resource datatype = null;
@@ -69,9 +78,10 @@ public abstract class TermMap extends R2RMLResource {
 		List<Statement> templates = description.listProperties(R2RML.template).toList();
 		List<Statement> constants = description.listProperties(R2RML.constant).toList();
 		List<Statement> columns = description.listProperties(R2RML.column).toList();
+		List<Statement> functions = description.listProperties(RRF.functionCall).toList();
 
 		// Having exactly one of rr:constant, rr:column, rr:template
-		if(templates.size() + constants.size() + columns.size() != 1) {
+		if(templates.size() + constants.size() + columns.size() + functions.size() != 1) {
 			logger.error("TermMap must have exactly one of rr:constant, rr:column, and rr:template.");
 			logger.error(description);
 			return false;
@@ -108,6 +118,19 @@ public abstract class TermMap extends R2RMLResource {
 			constant = distillConstant(constants.get(0).getObject());
 			if(constant == null)
 				return false;
+		} else if(functions.size() == 1) {
+			functionCall = distillFunction(functions.get(0).getObject());
+			if(functionCall == null)
+				return false;
+			
+			// Check whether the referenced column names are valid
+			for(String columnName : getReferencedColumns()) {
+				if(!R2RMLUtil.isValidColumnName(columnName)) {
+					logger.error("Invalid column name in rrf:functionCall " + columnName);
+					logger.error(description);
+					return false;
+				}
+			}
 		}
 
 		// Validity of the termType is also local. 
@@ -135,6 +158,67 @@ public abstract class TermMap extends R2RMLResource {
 		}
 
 		return true;
+	}
+
+	private FunctionCall distillFunction(RDFNode node) {
+		if(node.isLiteral())
+			return null;
+		
+		// fcn stands for Function Call Node
+		Resource fcn = node.asResource();
+		
+		List<Statement> functions = fcn.listProperties(RRF.function).toList();
+		if(functions.size() != 1) {
+			logger.error("Function valued TermMap must have exactly one rrf:function.");
+			logger.error(description);
+			return null;
+		}
+		
+		// Process the function, get the function name and then the parameters
+		RDFNode f = functions.get(0).getObject();
+		String functionname = JSEnv.registerFunction(f);
+		if(functionname == null) {
+			// Something went wrong, reported by the function. 
+			return null;
+		}
+		
+		List<Statement> pbindings = fcn.listProperties(RRF.parameterBindings).toList();
+		if(pbindings.size() != 1) {
+			logger.error("Function valued TermMap must have exactly one rrf:parameterBindings.");
+			logger.error(description);
+			return null;
+		}
+		
+		RDFList list = null;
+		try {
+			list = pbindings.get(0).getObject().as(RDFList.class);
+		} catch(UnsupportedPolymorphismException e) {
+			logger.error("rrf:parameterBindings must be an RDF collection.");
+			logger.error(description);
+			return null;
+		}
+		
+		functionCall = new FunctionCall(functionname);
+		
+		ExtendedIterator<RDFNode> iter = list.iterator();
+		while(iter.hasNext()) {
+			RDFNode param = iter.next();
+			if(!param.isResource()) {
+				logger.error("Parameters in rrf:parameterBindings have to be resources.");
+				logger.error(description);
+				return null;
+			}
+			ObjectMap om = new ObjectMap(param.asResource(), baseIRI);
+			if(om.preProcessAndValidate()) {
+				functionCall.addParameter(om);
+			} else {
+				logger.error("Something went wrong processing parameter.");
+				logger.error(description);
+				return null;
+			}
+		}
+		
+		return functionCall;
 	}
 
 	/**
@@ -177,6 +261,10 @@ public abstract class TermMap extends R2RMLResource {
 			while(m.find()) {
 				set.add(template.substring(m.start(1), m.end(1)));
 			}
+		} else if(isFunctionValuedTermMap()) {
+			for(TermMap tm : functionCall.getTermMaps()) {
+				set.addAll(tm.getReferencedColumns());
+			}
 		} // else constant and thus empty set.
 		return set;
 	}
@@ -202,6 +290,10 @@ public abstract class TermMap extends R2RMLResource {
 
 	public boolean isConstantValuedTermMap() {
 		return constant != null;
+	}
+	
+	public boolean isFunctionValuedTermMap() {
+		return functionCall != null;
 	}
 
 	public Resource getTermType() {
@@ -299,7 +391,7 @@ public abstract class TermMap extends R2RMLResource {
 	 * ~A_17.1-2			-> ~A_17.1-2				OK
 	 * 葉篤正					-> 葉篤正						NOK!
 	 * 
-	 * TODO: Better complient safe IRI conversion.
+	 * TODO: Better compliant safe IRI conversion.
 	 * 
 	 * @param iri
 	 * @return
@@ -330,6 +422,17 @@ public abstract class TermMap extends R2RMLResource {
 			// Unescape all the values!
 			value = StringEscapeUtils.unescapeJava(value);
 			return value;
+		} else if (isFunctionValuedTermMap()) {
+			List<Object> arguments = new ArrayList<>();
+			for(TermMap tm : functionCall.getTermMaps()) {
+				Object argument = tm.getValueForRDFTerm(row);
+				arguments.add(argument);
+			}
+			try {
+				return JSEnv.invoke(functionCall.getFunctionName(), arguments.toArray());
+			} catch (NoSuchMethodException | ScriptException e) {
+				throw new R2RMLException("Error invoking function.", e);
+			}
 		}
 		return null;
 	}
