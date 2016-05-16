@@ -94,8 +94,8 @@ This implementation of R2RML re-implemented the ideas presented in [1], allowing
 ## License
 This implementation of R2RML is written by [Christophe Debruyne](http://www.christophedebruyne.be/).
 
+This code is copyrighted by [ADAPT - Trinity College Dublin](http://www.adaptcentre.ie/) and released under the [MIT license](http://opensource.org/licenses/MIT).
+
 ## References
 
 [1]  C. Debruyne and D. O'Sullivan. R2RML-F: Towards Sharing and Executing Domain Logic in R2RML Mappings. In Proceedings of the Workshop on Linked Data on the Web, LDOW 2016, co-located with the 25th International World Wide Web Conference (WWW 2016), Montreal, Canada, April 12th, 2016, 2016
-
-This code is copyrighted by [ADAPT - Trinity College Dublin](http://www.adaptcentre.ie/) and released under the [MIT license](http://opensource.org/licenses/MIT).
