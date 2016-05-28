@@ -413,11 +413,17 @@ public abstract class TermMap extends R2RMLResource {
 		} else if(isTemplateValuedTermMap()) {
 			String value = new String(template);
 			for(String reference : getReferencedColumns()) {
-				String s = row.getObject(reference).toString();
+				Object object = row.getObject(reference);
+				// If one of the values is NULL, we don't generate the term.
+				// We need to check if this is the desired approach for templates
+				// with multiple variables.
+				if(object == null)
+					return null;
+				String string = object.toString();
 				// first argument is a regular expression, therefore we
 				// have to escape the curly braces, but in a string that
 				// also means escaping the escape character.
-				value = value.replaceAll("\\{" + reference + "\\}", s);
+				value = value.replaceAll("\\{" + reference + "\\}", string);
 			}
 			// Unescape all the values!
 			value = StringEscapeUtils.unescapeJava(value);
