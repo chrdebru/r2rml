@@ -271,5 +271,22 @@ public class TestR2RML extends TestCase {
 		// assertEquals(true, output.difference(compare).isEmpty());
 		// assertEquals(true, compare.difference(output).isEmpty());
 	}
+	
+	/**
+	 * Testing adhoc datatypes...
+	 * @throws R2RMLException
+	 */
+	public void testExample14() throws R2RMLException {
+		Configuration configuration = new Configuration();
+		configuration.setMappingFile("./test/resources/14.mapping.ttl");
+		configuration.setConnectionURL(connectionURL);
+		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+		engine.execute();
+		Model model = engine.getDataset().getDefaultModel();
+		Model target = ModelFactory.createDefaultModel();
+		target.read("./test/resources/14.output.ttl");
+		assertEquals(true, model.difference(target).isEmpty());
+		assertEquals(true, target.difference(model).isEmpty());	
+	}
 
 }
