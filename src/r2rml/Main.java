@@ -3,9 +3,12 @@ package r2rml;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 
 import org.apache.jena.iri.IRIFactory;
@@ -110,15 +113,12 @@ public class Main {
 			boolean append) 
 					throws IOException {
 		
-		FileWriter fw = new FileWriter(file, append);
-		BufferedWriter bw = new BufferedWriter(fw);
-		PrintWriter pw = new PrintWriter(bw);
-		
-		model.write(pw, format);
-		
-		pw.close();
+		// Make sure that we write output as UTF-8 as windows machines
+		// use a different encoding for the writers...		
+		Path path = Paths.get(file.getPath());
+		BufferedWriter bw = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+		model.write(bw, format);
 		bw.close();
-		fw.close();
 	}
 
 	private static void writeDatasetAsFile(
@@ -130,6 +130,7 @@ public class Main {
 			File o = new File(configuration.getOutputFile());
 			if(o.exists()) 
 				o.delete();
+			o.createNewFile(); // make sure that it exists for some of the APIs.
 			
 			Dataset ds = engine.getDataset();
 			writeModelToFile(ds.getDefaultModel(), o, configuration.getFormat());
@@ -137,7 +138,7 @@ public class Main {
 			Iterator<String> graphs = engine.getDataset().listNames();
 			while(graphs.hasNext()) {
 				String graph = graphs.next();
-				writeModelToFile(ds.getNamedModel(graph), o, configuration.getFormat());
+				writeModelToFile(ds.getNamedModel(graph), o, configuration.getFormat(), true);
 			}
 
 		} catch (Exception e) {
@@ -153,6 +154,7 @@ public class Main {
 			File o = new File(configuration.getOutputFile());
 			if(o.exists()) 
 				o.delete();
+			o.createNewFile(); // Make sure that file exists for APIs.
 
 			FileOutputStream out = new FileOutputStream(o);
 			Lang lang = configuration.getFormat().equals("NQUADS") ? Lang.NQ : Lang.TRIG;
