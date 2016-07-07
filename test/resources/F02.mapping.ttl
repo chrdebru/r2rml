@@ -1,0 +1,31 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix rrf: <http://kdeg.scss.tcd.ie/ns/rrf#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> . 
+
+<#TriplesMap1>
+    rr:logicalTable [ rr:tableName "EMP" ];
+    rr:subjectMap [
+        rr:template "http://data.example.com/employee/{EMPNO}";
+        rr:class foaf:Person;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate foaf:givenName;
+        rr:objectMap [ rr:column "FNAME" ];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate foaf:lastName;
+        rr:objectMap [ rr:column "LNAME" ];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate foaf:name;
+        rr:objectMap [
+	        rrf:functionCall [
+	 			rrf:function <http://data.example.org/functions/concat> ;
+	 			rrf:parameterBindings (
+	 				[ rr:column "FNAME" ]
+	 				[ rr:column "LNAME" ]
+	 			) ;
+	 		] ; 
+	 	]
+    ]    
+    .

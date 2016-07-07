@@ -22,12 +22,12 @@ import r2rml.engine.R2RMLProcessor;
  * @author Christophe Debruyne
  *
  */
-public class TestR2RMLF extends TestCase {
+public class TestR2RMLFLinkedData extends TestCase {
 
-	private static Logger logger = Logger.getLogger(TestR2RMLF.class.getName());
+	private static Logger logger = Logger.getLogger(TestR2RMLFLinkedData.class.getName());
 	private static String connectionURL = "jdbc:derby:memory:testing";
 
-	public TestR2RMLF(String testName) {
+	public TestR2RMLFLinkedData(String testName) {
 		super(testName);
 	}
 
@@ -52,22 +52,10 @@ public class TestR2RMLF extends TestCase {
 		try {
 			Connection connection = DriverManager.getConnection(connectionURL);
 			Statement statement = connection.createStatement();
-			statement.execute("CREATE TABLE DEPT(DEPTNO INT PRIMARY KEY, DNAME VARCHAR(30), LOC VARCHAR(30))");
-			statement.execute("CREATE TABLE EMP(EMPNO INT PRIMARY KEY, ENAME VARCHAR(100), JOB VARCHAR(20), DEPTNO INT, FOREIGN KEY (DEPTNO) REFERENCES DEPT(DEPTNO))");
-			statement.execute("INSERT INTO DEPT VALUES (10, 'APPSERVER', 'NEW YORK')");
-			statement.execute("INSERT INTO EMP VALUES (7369, 'SMITH', 'CLERK', 10)");
-
-			statement.execute("CREATE TABLE DEPT2(DEPTNO INT, DNAME VARCHAR(30), LOC VARCHAR(30))");
-			statement.execute("CREATE TABLE EMP2(EMPNO INT, ENAME VARCHAR(100), JOB VARCHAR(20))");
-			statement.execute("CREATE TABLE EMP2DEPT(EMPNO INT, DEPTNO INT)");
-			statement.execute("INSERT INTO DEPT2 VALUES (10, 'APPSERVER', 'NEW YORK')");
-			statement.execute("INSERT INTO DEPT2 VALUES (20, 'RESEARCH', 'BOSTON')");
-			statement.execute("INSERT INTO EMP2 VALUES (7369, 'SMITH', 'CLERK')");
-			statement.execute("INSERT INTO EMP2 VALUES (7369, 'SMITH', 'NIGHTGUARD')");
-			statement.execute("INSERT INTO EMP2 VALUES (7400, 'JONES', 'ENGINEER')");
-			statement.execute("INSERT INTO EMP2DEPT VALUES (7369, 10)");
-			statement.execute("INSERT INTO EMP2DEPT VALUES (7369, 20)");
-			statement.execute("INSERT INTO EMP2DEPT VALUES (7400, 10)");
+			statement.execute("CREATE TABLE EMP(EMPNO INT PRIMARY KEY, FNAME VARCHAR(20), LNAME VARCHAR(20))");
+			statement.execute("INSERT INTO EMP VALUES (1, 'CHRISTOPHE', 'DEBRUYNE')");
+			statement.execute("INSERT INTO EMP VALUES (2, 'ADEMAR', 'CROTTI JUNIOR')");
+			statement.execute("INSERT INTO EMP VALUES (3, 'DECLAN', 'O''SULLIVAN')");
 			statement.close();
 			connection.close();
 
@@ -93,13 +81,13 @@ public class TestR2RMLF extends TestCase {
 
 	public void testExampleF01() {
 		Configuration configuration = new Configuration();
-		configuration.setMappingFile("./test/resources/F01.mapping.ttl");
+		configuration.setMappingFile("./test/resources/F02.mapping.ttl");
 		configuration.setConnectionURL(connectionURL);
 		R2RMLProcessor engine = new R2RMLProcessor(configuration);
 		engine.execute();
 		Model model = engine.getDataset().getDefaultModel();
 		Model target = ModelFactory.createDefaultModel();
-		target.read("./test/resources/F01.output.ttl");
+		target.read("./test/resources/F02.output.ttl");
 		assertEquals(true, model.difference(target).isEmpty());
 		assertEquals(true, target.difference(model).isEmpty());	
 	}

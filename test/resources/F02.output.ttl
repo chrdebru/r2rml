@@ -1,0 +1,17 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> . 
+
+<http://data.example.com/employee/1> rdf:type foaf:Person.
+<http://data.example.com/employee/1> foaf:givenName "CHRISTOPHE".
+<http://data.example.com/employee/1> foaf:lastName "DEBRUYNE".
+<http://data.example.com/employee/1> foaf:name "CHRISTOPHE DEBRUYNE".
+
+<http://data.example.com/employee/2> rdf:type foaf:Person.
+<http://data.example.com/employee/2> foaf:givenName "ADEMAR".
+<http://data.example.com/employee/2> foaf:lastName "CROTTI JUNIOR".
+<http://data.example.com/employee/2> foaf:name "ADEMAR CROTTI JUNIOR".
+
+<http://data.example.com/employee/3> rdf:type foaf:Person.
+<http://data.example.com/employee/3> foaf:givenName "DECLAN".
+<http://data.example.com/employee/3> foaf:lastName "O'SULLIVAN".
+<http://data.example.com/employee/3> foaf:name "DECLAN O'SULLIVAN".
