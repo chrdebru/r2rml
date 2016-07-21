@@ -116,7 +116,10 @@ public class Main {
 		// Make sure that we write output as UTF-8 as windows machines
 		// use a different encoding for the writers...		
 		Path path = Paths.get(file.getPath());
-		BufferedWriter bw = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+		
+		if(!file.exists()) file.createNewFile();
+		
+		BufferedWriter bw = Files.newBufferedWriter(path, StandardCharsets.UTF_8, append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING);
 		model.write(bw, format);
 		bw.close();
 	}
