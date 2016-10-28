@@ -25,7 +25,11 @@ public class Row {
 
 	public Object getObject(String column) throws R2RMLException {
 		try {
-			return resultset.getObject(indexMap.get(column));
+			Integer index = indexMap.get(column);
+			// Check whether the user added the right column names in the mappings
+			if(index == null)
+				throw new R2RMLException("Column '" +  column + "' does not exit in the logical table.", null);
+			return resultset.getObject(index);
 		} catch (SQLException e) {
 			throw new R2RMLException(e.getMessage(), e);
 		}
