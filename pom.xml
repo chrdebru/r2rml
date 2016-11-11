@@ -77,6 +77,12 @@
 			<artifactId>postgresql</artifactId>
 			<version>9.1-901.jdbc4</version>
 		</dependency>
+		<!-- h2 allows us to create tables from CSV files in an easy way -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.193</version>
+		</dependency>
 	</dependencies>
 	<organization>
 		<name>Adapt Centre, Trinity College Dublin</name>

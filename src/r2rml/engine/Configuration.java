@@ -3,7 +3,10 @@ package r2rml.engine;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
@@ -26,7 +29,8 @@ public class Configuration {
 	private String format = null;
 	private String baseIRI = null;
 	private boolean filePerGraph = false;
-	
+	private List<String> CSVFiles = new ArrayList<String>();
+
 	public Configuration(String path) throws R2RMLException {
 		Properties properties = new Properties();
 		try {
@@ -43,6 +47,14 @@ public class Configuration {
 		format = properties.getProperty("format", "TURTLE");
 		setFilePerGraph("true".equals(properties.getProperty("filePerGraph", "false").toLowerCase()));
 		baseIRI = properties.getProperty("baseIRI");
+		
+		String files = properties.getProperty("CSVFiles");
+		if(files != null && !"".equals(files)) {
+			StringTokenizer tk = new StringTokenizer(files, ";");
+			while(tk.hasMoreTokens()) {
+				CSVFiles.add(tk.nextToken());
+			}
+		}
 	}
 	
 	public Configuration() {
@@ -117,6 +129,22 @@ public class Configuration {
 
 	public void setFilePerGraph(boolean filePerGraph) {
 		this.filePerGraph = filePerGraph;
+	}
+	
+	public List<String> getCSVFiles() {
+		return CSVFiles;
+	}
+
+	public void setCSVFiles(List<String> cSVFiles) {
+		CSVFiles = cSVFiles;
+	}
+
+	public boolean hasConnectionURL() {
+		return connectionURL != null && !"".equals(connectionURL);
+	}
+
+	public boolean hasCSVFiles() {
+		return CSVFiles != null && CSVFiles.size() > 0;
 	}
 	
 }

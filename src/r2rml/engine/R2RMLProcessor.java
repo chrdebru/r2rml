@@ -1,10 +1,13 @@
 package r2rml.engine;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.log4j.Logger;
@@ -58,21 +61,70 @@ public class R2RMLProcessor {
 	}
 
 	private void createDatabaseConnection() {
-		String user = configuration.getUser();
-		String pass = configuration.getPassword();
-		Properties props = new Properties();
-		if(user != null && !"".equals(user))
-			props.setProperty("user", user);
-		if(pass != null && !"".equals(pass))
-			props.setProperty("password", pass);
-
+		// Determine situation
+		if(configuration.hasConnectionURL() && configuration.hasCSVFiles()) {
+			logger.error("You cannot provide a connection URL and a list of CSV files at the same time.");
+			System.exit(-1);
+		}
+		
 		try {
-			connection = DriverManager.getConnection(configuration.getConnectionURL(), props);
+			Properties props = new Properties();
+			
+			// If files, create in-memory database
+			if(configuration.hasCSVFiles()) {
+				try {
+					// This method will create a new connection URL that will be added to the configuration
+					connection = createTablesFromCSVFiles();
+				} catch (Exception ex) {
+					logger.error("Exception during database startup.", ex);
+					System.exit(-1);
+				}
+			} else {
+				// Connecting to a database
+				String user = configuration.getUser();
+				String pass = configuration.getPassword();
+				if(user != null && !"".equals(user))
+					props.setProperty("user", user);
+				if(pass != null && !"".equals(pass))
+					props.setProperty("password", pass);			
+				connection = DriverManager.getConnection(configuration.getConnectionURL(), props);
+			}
+			
 		} catch (SQLException e) {
 			logger.error("Error connecting to database.", e);
 			System.exit(-1);
 		}
 
+	}
+
+	private Connection createTablesFromCSVFiles() throws Exception {
+		String connectionURL = "jdbc:h2:mem:" + System.currentTimeMillis();
+		configuration.setConnectionURL(connectionURL);
+		
+		logger.info("Starting in-memory database for unit tests");
+		DriverManager.getConnection(connectionURL + ";create=true").close();
+		
+		Connection connection = DriverManager.getConnection(connectionURL);
+		Statement statement = connection.createStatement();
+		
+		// for each file, load file as table...
+		for(String f : configuration.getCSVFiles()) {
+			File file = new File(f);
+			String name = createTableNameForFile(file);
+			logger.info("Loading " + file + " as table " + name);
+			String sql = "CREATE TABLE " + name + " AS SELECT * FROM CSVREAD('"  + file.getAbsolutePath() + "', NULL, NULL);";
+			statement.execute(sql);
+			logger.info("Loaded " + file + " as table " + name);	
+		}
+		
+		// only close the statement. Don't close connection! It will be returned 
+		statement.close();
+		return connection;
+	}
+
+	private String createTableNameForFile(File file) {
+		String name = FilenameUtils.getBaseName(file.getAbsolutePath());
+		return name;
 	}
 
 	private void closeDatabaseConnection() {

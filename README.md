@@ -25,8 +25,11 @@ Where `config.properties` is a properties file containing:
 - `format`, format of the output files (default "TURTLE")
 - `filePerGraph`, flag to write the different graphs in separate files (default "false")
 - `baseIRI`, used in resolving relative IRIs produced by the R2RML mapping
+- `CSVFiles`, a list of paths to CSV files that are separated by semicolons.
 
-When named graphs are used in the R2RML mapping, one should use serialization that support graphs such as N-QUADS and TRIG. The use of other serializations formats (such as TURTLE) results in all triples of all graphs being written away to that file. When setting the flag `filePerGraph` to `true` for serialization formats that do not support graphs, however, the value for `outputFile` will be used to create a directory in which a file will be created for each graph in RDF dataset.
+When named graphs are used in the R2RML mapping, one should use serialization that support graphs such as N-QUADS and TRIG. The use of other serializations formats (such as TURTLE) results in all triples of all graphs being written away to that file. When setting the flag `filePerGraph` to `true` for serialization formats that do not support graphs, however, the value for `outputFile` will be used to create a directory in which a file will be created for each graph in the RDF dataset.
+
+Note that you cannot use both `CSVFiles` and `connectionURL` at the same time. For each CSV file, the name of the table will be the base name of that file.
 
 ## Example
 
