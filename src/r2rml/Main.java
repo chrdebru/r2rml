@@ -179,7 +179,7 @@ public class Main {
 	private static String getExtensionForFormat(String format) {
 		if(equals(format, new String[]{"turtle", "ttl"}))
 			return ".ttl";
-		if(equals(format, new String[]{"n-triples", "n-triple", "nt"}))
+		if(equals(format, new String[]{"n-triples", "n-triple", "nt", "ntriples"}))
 			return ".nt";
 		if(equals(format, new String[]{"rdf", "rdf/xml", "rdf/xml-abbrev"}))
 			return ".rdf";
@@ -190,7 +190,7 @@ public class Main {
 		if(equals(format, new String[]{"jsonld"}))
 			return ".jsonld";
 		
-		return null;
+		return ".unknown";
 	}
 
 	private static boolean equals(String format, String[] strings) {
