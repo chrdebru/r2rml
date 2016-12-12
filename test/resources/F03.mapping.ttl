@@ -1,0 +1,40 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix rrf: <http://kdeg.scss.tcd.ie/ns/rrf#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <http://example.com/ns#> .
+
+<#TriplesMap1>
+    rr:logicalTable [ rr:tableName "EMP" ];
+    rr:subjectMap [
+        rr:template "http://data.example.com/employee/{EMPNO}";
+        rr:class ex:Employee;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:name;
+        rr:objectMap [ rr:column "ENAME" ];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:test;
+        rr:objectMap [
+	 		rr:datatype xsd:integer ;
+	        rrf:functionCall [
+	 			rrf:function <#foo> ;
+	 			rrf:parameterBindings (
+	 				[ rr:column "EMPNO" ]
+	 			) ;
+	 		] ; 
+	 	]
+    ]    
+    .
+    
+<#foo>
+	rrf:functionName "foo" ;
+	rrf:functionBody """
+	function foo(var1) {
+		return var1 ;
+	}
+	""" ;
+.
+	
+<#a> rr:objectMap <#b> .
+<#b> rr:column "ENAME" .

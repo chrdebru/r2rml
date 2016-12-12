@@ -1,4 +1,2 @@
 <http://data.example.com/employee/7369>
         <http://example.com/ns#name>  "SMITH" .
-<http://data.example.com/employee/7369>
-        <http://example.com/ns#name>  "SMITH" .

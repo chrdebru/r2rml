@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import junit.framework.TestCase;
 import r2rml.engine.Configuration;
 import r2rml.engine.R2RMLProcessor;
+import r2rml.function.JSEnv;
 
 /**
  * Unit test for testing the functionality of this implementation using an
@@ -100,6 +101,21 @@ public class TestR2RMLF extends TestCase {
 		Model model = engine.getDataset().getDefaultModel();
 		Model target = ModelFactory.createDefaultModel();
 		target.read("./test/resources/F01.output.ttl");
+		assertEquals(true, model.difference(target).isEmpty());
+		assertEquals(true, target.difference(model).isEmpty());	
+		
+		JSEnv.reset();
+	}
+	
+	public void testExampleF03() {
+		Configuration configuration = new Configuration();
+		configuration.setMappingFile("./test/resources/F03.mapping.ttl");
+		configuration.setConnectionURL(connectionURL);
+		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+		engine.execute();
+		Model model = engine.getDataset().getDefaultModel();
+		Model target = ModelFactory.createDefaultModel();
+		target.read("./test/resources/F03.output.ttl");
 		assertEquals(true, model.difference(target).isEmpty());
 		assertEquals(true, target.difference(model).isEmpty());	
 	}
