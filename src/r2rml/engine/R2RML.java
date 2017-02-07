@@ -39,13 +39,16 @@ public final class R2RML {
 	public static final Property column = ResourceFactory.createProperty(NS + "column");
 	public static final Property constant = ResourceFactory.createProperty(NS + "constant");
 	public static final Property datatype = ResourceFactory.createProperty(NS + "datatype");
+	public static final Property graph = ResourceFactory.createProperty(NS + "graph");
 	public static final Property graphMap = ResourceFactory.createProperty(NS + "graphMap");
 	public static final Property joinCondition = ResourceFactory.createProperty(NS + "joinCondition");
 	public static final Property language = ResourceFactory.createProperty(NS + "language");
 	public static final Property logicalTable = ResourceFactory.createProperty(NS + "logicalTable");
+	public static final Property object = ResourceFactory.createProperty(NS + "object");
 	public static final Property objectMap = ResourceFactory.createProperty(NS + "objectMap");
 	public static final Property parent = ResourceFactory.createProperty(NS + "parent");
 	public static final Property parentTriplesMap = ResourceFactory.createProperty(NS + "parentTriplesMap");
+	public static final Property predicate = ResourceFactory.createProperty(NS + "predicate");
 	public static final Property predicateMap = ResourceFactory.createProperty(NS + "predicateMap");
 	public static final Property predicateObjectMap = ResourceFactory.createProperty(NS + "predicateObjectMap");
 	public static final Property sqlQuery = ResourceFactory.createProperty(NS + "sqlQuery");
