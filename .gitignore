@@ -23,3 +23,5 @@ target/
 /bin/
 
 derby.log
+
+dependency-reduced-pom.xml

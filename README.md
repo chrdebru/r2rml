@@ -12,7 +12,12 @@ $ mvn dependency:copy-dependencies
 The run the R2RML processor, execute the following command:
 
 ```bash
-$ java -jar r2rml-0.0.1-SNAPSHOT.jar config.properties
+$ java -jar r2rml.jar config.properties
+```
+A fat jar is also provided with the [Apache Maven Shade Plugin](https://maven.apache.org/plugins/maven-shade-plugin/). It does not depend on the `dependency` folder and can be executed as follows:
+
+```bash
+$ java -jar r2rml-fat.jar config.properties
 ```
 
 Where `config.properties` is a properties file containing:
