@@ -101,7 +101,7 @@ public class R2RMLProcessor {
 		String connectionURL = "jdbc:h2:mem:" + System.currentTimeMillis();
 		configuration.setConnectionURL(connectionURL);
 		
-		logger.info("Starting in-memory database for unit tests");
+		logger.info("Starting in-memory database");
 		DriverManager.getConnection(connectionURL + ";create=true").close();
 		
 		Connection connection = DriverManager.getConnection(connectionURL);
