@@ -9,7 +9,7 @@ $ mvn package
 $ mvn dependency:copy-dependencies
 ```
 
-The run the R2RML processor, execute the following command
+The run the R2RML processor, execute the following command:
 
 ```bash
 $ java -jar r2rml-0.0.1-SNAPSHOT.jar config.properties
