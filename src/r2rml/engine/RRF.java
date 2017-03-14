@@ -23,4 +23,7 @@ public final class RRF {
 	public static final Property functionName = ResourceFactory.createProperty(NS + "functionName");
 	public static final Property parameterBindings = ResourceFactory.createProperty(NS + "parameterBindings");
 	
+	// Properties for Containers and Collections
+	public static final Property gather = ResourceFactory.createProperty(NS + "gather");
+	
 }

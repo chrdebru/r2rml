@@ -17,12 +17,15 @@ import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.enhanced.UnsupportedPolymorphismException;
 import org.apache.jena.iri.IRI;
 import org.apache.jena.iri.IRIFactory;
+import org.apache.jena.rdf.model.Container;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.XSD;
 import org.apache.log4j.Logger;
 
@@ -61,6 +64,7 @@ public abstract class TermMap extends R2RMLResource {
 	private RDFNode constant;
 	private String column;
 	private FunctionCall functionCall;
+	private Gather gather;
 
 	protected String language = null;
 	protected Resource datatype = null;
@@ -79,10 +83,11 @@ public abstract class TermMap extends R2RMLResource {
 		List<Statement> constants = description.listProperties(R2RML.constant).toList();
 		List<Statement> columns = description.listProperties(R2RML.column).toList();
 		List<Statement> functions = description.listProperties(RRF.functionCall).toList();
+		List<Statement> gathers = description.listProperties(RRF.gather).toList();
 
 		// Having exactly one of rr:constant, rr:column, rr:template
-		if(templates.size() + constants.size() + columns.size() + functions.size() != 1) {
-			logger.error("TermMap must have exactly one of rr:constant, rr:column, and rr:template.");
+		if(templates.size() + constants.size() + columns.size() + functions.size() + gathers.size() != 1) {
+			logger.error("TermMap must have exactly one of rr:constant, rr:column, rr:template, rrf:functionCall, and rrf:gather.");
 			logger.error(description);
 			return false;
 		}
@@ -122,11 +127,24 @@ public abstract class TermMap extends R2RMLResource {
 			functionCall = distillFunction(functions.get(0).getObject());
 			if(functionCall == null)
 				return false;
-			
+
 			// Check whether the referenced column names are valid
 			for(String columnName : getReferencedColumns()) {
 				if(!R2RMLUtil.isValidColumnName(columnName)) {
 					logger.error("Invalid column name in rrf:functionCall " + columnName);
+					logger.error(description);
+					return false;
+				}
+			}
+		} else if(gathers.size() == 1) {
+			gather = distillGather(gathers.get(0).getObject());
+			if(gather == null)
+				return false;
+
+			// Check whether the referenced column names are valid
+			for(String columnName : getReferencedColumns()) {
+				if(!R2RMLUtil.isValidColumnName(columnName)) {
+					logger.error("Invalid column name in rrf:gather " + columnName);
 					logger.error(description);
 					return false;
 				}
@@ -160,20 +178,54 @@ public abstract class TermMap extends R2RMLResource {
 		return true;
 	}
 
-	private FunctionCall distillFunction(RDFNode node) {
-		if(node.isLiteral())
+	private Gather distillGather(RDFNode node) {
+		if(!node.canAs(RDFList.class)){
+			logger.error("rrf:gather should be used on a RDF collection.");
 			return null;
+		}
+
+		RDFList list = node.as(RDFList.class);
 		
+		Gather gather = new Gather();
+
+		ExtendedIterator<RDFNode> iter = list.iterator();
+		while(iter.hasNext()) {
+			RDFNode param = iter.next();
+			if(!param.isResource()) {
+				logger.error("Nodes in rrf:gather have to be resources.");
+				logger.error(description);
+				return null;
+			}
+			
+			ObjectMap om = new ObjectMap(param.asResource(), baseIRI);
+			if(om.preProcessAndValidate()) {
+				gather.addTermMap(om);
+			} else {
+				logger.error("Something went wrong processing parameter.");
+				logger.error(description);
+				return null;
+			}
+		}
+
+		return gather;
+	}
+
+	private FunctionCall distillFunction(RDFNode node) {
+		if(node.isLiteral()) {
+			logger.error("FunctionCall cannot be a literal.");
+			return null;
+		}
+
 		// fcn stands for Function Call Node
 		Resource fcn = node.asResource();
-		
+
 		List<Statement> functions = fcn.listProperties(RRF.function).toList();
 		if(functions.size() != 1) {
 			logger.error("Function valued TermMap must have exactly one rrf:function.");
 			logger.error(description);
 			return null;
 		}
-		
+
 		// Process the function, get the function name and then the parameters
 		RDFNode f = functions.get(0).getObject();
 		String functionname = JSEnv.registerFunction(f);
@@ -181,14 +233,14 @@ public abstract class TermMap extends R2RMLResource {
 			// Something went wrong, reported by the function. 
 			return null;
 		}
-		
+
 		List<Statement> pbindings = fcn.listProperties(RRF.parameterBindings).toList();
 		if(pbindings.size() != 1) {
 			logger.error("Function valued TermMap must have exactly one rrf:parameterBindings.");
 			logger.error(description);
 			return null;
 		}
-		
+
 		RDFList list = null;
 		try {
 			list = pbindings.get(0).getObject().as(RDFList.class);
@@ -197,9 +249,9 @@ public abstract class TermMap extends R2RMLResource {
 			logger.error(description);
 			return null;
 		}
-		
-		functionCall = new FunctionCall(functionname);
-		
+
+		FunctionCall functionCall = new FunctionCall(functionname);
+
 		ExtendedIterator<RDFNode> iter = list.iterator();
 		while(iter.hasNext()) {
 			RDFNode param = iter.next();
@@ -217,7 +269,7 @@ public abstract class TermMap extends R2RMLResource {
 				return null;
 			}
 		}
-		
+
 		return functionCall;
 	}
 
@@ -291,9 +343,13 @@ public abstract class TermMap extends R2RMLResource {
 	public boolean isConstantValuedTermMap() {
 		return constant != null;
 	}
-	
+
 	public boolean isFunctionValuedTermMap() {
 		return functionCall != null;
+	}
+
+	public boolean isGatherTermMap() {
+		return gather != null;
 	}
 
 	public Resource getTermType() {
@@ -310,6 +366,20 @@ public abstract class TermMap extends R2RMLResource {
 
 	public boolean isTermTypeLiteral() {
 		return getTermType().getURI().equals(R2RML.LITERAL.getURI());
+	}
+	
+	public boolean isTermTypeList() {
+		return getTermType().getURI().equals(RDF.List.getURI());
+	}
+	
+	public boolean isTermTypeContainer() {
+		if(getTermType().getURI().equals(RDF.Bag.getURI()))
+			return true;
+		if(getTermType().getURI().equals(RDF.Seq.getURI()))
+			return true;
+		if(getTermType().getURI().equals(RDF.Alt.getURI()))
+			return true;
+		return false;
 	}
 
 	public RDFNode generateRDFTerm(Row row) throws R2RMLException {
@@ -331,13 +401,13 @@ public abstract class TermMap extends R2RMLResource {
 			IRI iri = IRIFactory.iriImplementation().create(value.toString());
 			if(iri.isAbsolute())
 				return ResourceFactory.createResource(convertToIRISafeVersion(iri));
-			
+
 			iri = IRIFactory.iriImplementation().create(baseIRI + value);
 			if(iri.isAbsolute())
 				return ResourceFactory.createResource(convertToIRISafeVersion(iri));
-			
+
 			throw new R2RMLException("Data error. " + baseIRI + value + " is not a valid absolute IRI", null);
-			
+
 		}
 		/*
 		 * Otherwise, if the term type is rr:BlankNode: Return a blank node 
@@ -376,6 +446,8 @@ public abstract class TermMap extends R2RMLResource {
 			}
 			return ResourceFactory.createTypedLiteral(value);
 		}
+		
+		
 		return null;
 	}
 
@@ -438,6 +510,33 @@ public abstract class TermMap extends R2RMLResource {
 				return JSEnv.invoke(functionCall.getFunctionName(), arguments.toArray());
 			} catch (NoSuchMethodException | ScriptException e) {
 				throw new R2RMLException("Error invoking function.", e);
+			}
+		} else if (isGatherTermMap()) {
+			List<Object> items = new ArrayList<>();
+			for(TermMap tm : gather.getTermMaps()) {
+				Object item = tm.getValueForRDFTerm(row);
+				if(item != null)
+					items.add(item);
+			}
+			
+			if(isTermTypeContainer()) {
+				Container c = null;
+				if(getTermType().getURI().equals(RDF.Bag.getURI()))
+					c = ModelFactory.createDefaultModel().createBag();
+				if(getTermType().getURI().equals(RDF.Seq.getURI()))
+					c = ModelFactory.createDefaultModel().createSeq();
+				if(getTermType().getURI().equals(RDF.Alt.getURI()))
+					c = ModelFactory.createDefaultModel().createAlt();
+				
+				for(Object item : items)
+					c.add(item);
+				
+				return c;
+			} else if(isTermTypeList()) {
+				RDFList list = ModelFactory.createDefaultModel().createList();
+				for(Object item : items)
+					list.add((RDFNode) item);
+				return list;
 			}
 		}
 		return null;

@@ -119,7 +119,8 @@ public class PredicateObjectMap extends R2RMLResource {
 			boolean isOM = r.hasProperty(R2RML.column) 
 					|| r.hasProperty(R2RML.constant) 
 					|| r.hasProperty(R2RML.template)
-					|| r.hasProperty(RRF.functionCall);
+					|| r.hasProperty(RRF.functionCall)
+					|| r.hasProperty(RRF.gather);
 			boolean isROM = r.hasProperty(R2RML.joinCondition);
 
 			// If it plays the roles of a OM, create OM

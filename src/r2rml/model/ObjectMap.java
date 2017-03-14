@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.RDF;
 import org.apache.log4j.Logger;
 
 import r2rml.engine.R2RML;
@@ -89,8 +90,6 @@ public class ObjectMap extends TermMap {
 		return true;
 	}
 
-
-
 	@Override
 	protected RDFNode distillConstant(RDFNode node) {
 		// If the constant-valued term map is an object map, then its 
@@ -109,8 +108,8 @@ public class ObjectMap extends TermMap {
 	@Override
 	protected boolean isChosenTermTypeValid() {
 		// Check if invalid URI was provided!
-		if(!(isTermTypeLiteral() || isTermTypeBlankNode() || isTermTypeIRI())) {
-			logger.error("TermType for ObjectMap must be rr:IRI, rr:Literal or rr:BlankNode.");
+		if(!(isTermTypeLiteral() || isTermTypeBlankNode() || isTermTypeIRI() || isTermTypeList() || isTermTypeContainer())) {
+			logger.error("TermType for ObjectMap must be rr:IRI, rr:Literal, rr:BlankNode, rdf:List, rdf:Bag, rdf:Alt, or rdf:Seq.");
 			logger.error(description);
 			return false;
 		}
@@ -132,6 +131,10 @@ public class ObjectMap extends TermMap {
 		/* We assume that functions are also by default literals */
 		if(isFunctionValuedTermMap())
 			return R2RML.LITERAL;
+		
+		/* We assume that gathers are also by default collections */
+		if(isGatherTermMap())
+			return RDF.List;
 
 		return R2RML.IRI;
 	}
