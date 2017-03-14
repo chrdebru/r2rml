@@ -82,7 +82,7 @@ public abstract class TermMap extends R2RMLResource {
 
 		// Having exactly one of rr:constant, rr:column, rr:template
 		if(templates.size() + constants.size() + columns.size() + functions.size() != 1) {
-			logger.error("TermMap must have exactly one of rr:constant, rr:column, and rr:template.");
+			logger.error("TermMap must have exactly one of rr:constant, rr:column, rr:template, and rrf:functionCall.");
 			logger.error(description);
 			return false;
 		}
@@ -161,8 +161,10 @@ public abstract class TermMap extends R2RMLResource {
 	}
 
 	private FunctionCall distillFunction(RDFNode node) {
-		if(node.isLiteral())
+		if(node.isLiteral()) {
+			logger.error("FunctionCall cannot be a literal.");
 			return null;
+		}
 		
 		// fcn stands for Function Call Node
 		Resource fcn = node.asResource();
