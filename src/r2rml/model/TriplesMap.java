@@ -7,9 +7,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Alt;
+import org.apache.jena.rdf.model.Bag;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Seq;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.log4j.Logger;
@@ -318,12 +322,22 @@ public class TriplesMap extends R2RMLResource {
 	 * @param ngs The set of named graphs
 	 */
 	private void addTriplesToDataset(Dataset ds, Resource s, Property p, RDFNode o, Set<String> ngs) {
-		if(ngs.isEmpty()) {
-			ds.getDefaultModel().add(s, p, o);
-			count++;
-			return;
-		}
+		// If empty, then it will be stored in the default graph
+		// Explicitly add the default graph
+		if(ngs.isEmpty())
+			ngs.add(R2RML.defaultGraph.getURI());
 
+		// If container or list, add the default model of to each of the graphs!
+		if(isListOrContainer(o)) {
+			for(String ng : ngs) {
+				if(ng.equals(R2RML.defaultGraph.getURI())) {
+					ds.getDefaultModel().add(o.getModel());
+				} else {
+					ds.getNamedModel(ng).add(o.getModel());
+				}
+			}
+		}
+		
 		for(String ng : ngs) {
 			if(ng.equals(R2RML.defaultGraph.getURI())) {
 				ds.getDefaultModel().add(s, p, o);
@@ -333,6 +347,16 @@ public class TriplesMap extends R2RMLResource {
 				count++;
 			}
 		}
+	}
+
+	private boolean isListOrContainer(RDFNode o) {
+		if(o.isResource()) {
+			Resource r = o.asResource();
+			if(r.canAs(RDFList.class) || r.canAs(Bag.class) || r.canAs(Seq.class) || r.canAs(Alt.class)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String getBaseIRI() {

@@ -18,7 +18,7 @@
         		[ rr:column "FNAME" ] 
         		[ rr:column "LNAME" ]  
         	) ;
-        	rr:termType rdf:Bag ;
+        	rr:termType rdf:List ;
         ];
     ]
     

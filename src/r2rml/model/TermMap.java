@@ -317,6 +317,10 @@ public abstract class TermMap extends R2RMLResource {
 			for(TermMap tm : functionCall.getTermMaps()) {
 				set.addAll(tm.getReferencedColumns());
 			}
+		} else if(isGatherTermMap()) {
+			for(TermMap tm : gather.getTermMaps()) {
+				set.addAll(tm.getReferencedColumns());
+			}
 		} // else constant and thus empty set.
 		return set;
 	}
@@ -447,6 +451,11 @@ public abstract class TermMap extends R2RMLResource {
 			return ResourceFactory.createTypedLiteral(value);
 		}
 		
+		// Lists and Containers are RDFNodes in the rest of the code
+		// Just pass on their value
+		else if(isTermTypeList() || isTermTypeContainer()) {
+			return (RDFNode) value;
+		}
 		
 		return null;
 	}
@@ -503,6 +512,7 @@ public abstract class TermMap extends R2RMLResource {
 		} else if (isFunctionValuedTermMap()) {
 			List<Object> arguments = new ArrayList<>();
 			for(TermMap tm : functionCall.getTermMaps()) {
+				// We need the values (not RDF Nodes) to be passed to the function
 				Object argument = tm.getValueForRDFTerm(row);
 				arguments.add(argument);
 			}
@@ -514,7 +524,8 @@ public abstract class TermMap extends R2RMLResource {
 		} else if (isGatherTermMap()) {
 			List<Object> items = new ArrayList<>();
 			for(TermMap tm : gather.getTermMaps()) {
-				Object item = tm.getValueForRDFTerm(row);
+				// We need the RDF terms for the list or container
+				Object item = tm.generateRDFTerm(row);
 				if(item != null)
 					items.add(item);
 			}
@@ -533,9 +544,8 @@ public abstract class TermMap extends R2RMLResource {
 				
 				return c;
 			} else if(isTermTypeList()) {
-				RDFList list = ModelFactory.createDefaultModel().createList();
-				for(Object item : items)
-					list.add((RDFNode) item);
+				RDFNode[] members = items.toArray(new RDFNode[] {});
+				RDFList list = ModelFactory.createDefaultModel().createList(members);
 				return list;
 			}
 		}
