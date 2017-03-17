@@ -9,6 +9,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.log4j.Logger;
 
 import r2rml.engine.R2RML;
+import r2rml.engine.RRF;
 
 /**
  * ObjectMap Class.
@@ -19,16 +20,18 @@ import r2rml.engine.R2RML;
  * @version 0.2
  *
  */
-public class ObjectMap extends TermMap {
+public class ObjectMap extends TermMap implements Collectable {
 
 	private static Logger logger = Logger.getLogger(ObjectMap.class.getName());
 	private List<Statement> datatypes = null;
 	private List<Statement> languages = null;
+	private List<Statement> collectasslist = null;
 
 	public ObjectMap(Resource description, String baseIRI) {
 		super(description, baseIRI);
 		datatypes = description.listProperties(R2RML.datatype).toList();
 		languages = description.listProperties(R2RML.language).toList();
+		collectasslist = description.listProperties(RRF.collectAs).toList();
 	}
 
 	@Override
@@ -42,6 +45,23 @@ public class ObjectMap extends TermMap {
 			logger.error("TermType IRI cannot have a rr:datatype or rr:language.");
 			logger.error(description);
 			return false;
+		}
+		
+		if(collectasslist.size() > 1) {
+			logger.error("ObjectMap can only have at most one rrf:collectAs.");
+			logger.error(description);
+			return false;
+		} else if(collectasslist.size() == 1) {
+			RDFNode n = collectasslist.get(0).getObject();
+			if(!(n.isResource() && (
+					RDF.List.equals(n.asResource()) ||
+					RDF.Bag.equals(n.asResource()) ||
+					RDF.Seq.equals(n.asResource()) ||
+					RDF.Alt.equals(n.asResource())))) {
+				logger.error("rrf:collectAs must refer to RDF container or collection.");
+				logger.error(description);
+				return false;
+			}
 		}
 
 		if(isTermTypeLiteral()) {
@@ -137,5 +157,13 @@ public class ObjectMap extends TermMap {
 			return RDF.List;
 
 		return R2RML.IRI;
+	}
+
+	public boolean hasCollactAs() {
+		return collectasslist.size() == 1;
+	}
+
+	public Resource getCollectAsTermType() {
+		return collectasslist.get(0).getResource();
 	}
 }

@@ -18,8 +18,58 @@
         		[ rr:column "FNAME" ] 
         		[ rr:column "LNAME" ]  
         	) ;
-        	rr:termType rdf:List ;
+        	rr:termType rdf:Bag ;
         ];
     ]
+    
+    .
+    
+ <#TriplesMap2>
+    rr:logicalTable [ rr:tableName "PET" ];
+
+    rr:subjectMap [
+        rr:template "http://data.example.com/person/{OWNER}";
+    ];
+    
+    rr:predicateObjectMap [
+        rr:predicate ex:owns;
+        rr:objectMap [ 
+        	rr:template "http://data.example.com/pet/{ID}";
+        ];
+		rr:objectMap [ 
+        	rr:column "ID";
+        	rrf:collectAs rdf:List ;
+        ];
+    ];
+    
+    rr:predicateObjectMap [
+        rr:predicate ex:ownsSeqSeperate;
+        rr:objectMap [ 
+        	rr:template "http://data.example.com/pet/{ID}";
+        	rrf:collectAs rdf:Seq ;
+        ];
+    ] ;
+    
+	rr:predicateObjectMap [
+        rr:predicate ex:ownsBagRefObjectMap;
+        rr:objectMap [ 
+        	rr:parentTriplesMap <#PET>;
+            rr:joinCondition [
+                rr:child "ID";
+                rr:parent "ID";
+            ];
+        	rrf:collectAs rdf:Bag ;
+        ];
+    ]
+    
+    .
+    
+ <#PET>
+    rr:logicalTable [ rr:tableName "PET" ];
+
+    rr:subjectMap [
+        rr:template "http://data.example.com/pet-test/{ID}";
+        rr:class ex:Pet ;
+    ];
     
     .

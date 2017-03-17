@@ -6,9 +6,11 @@ import java.util.List;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.RDF;
 import org.apache.log4j.Logger;
 
 import r2rml.engine.R2RML;
+import r2rml.engine.RRF;
 
 /**
  * RefObjectMap Class.
@@ -17,11 +19,13 @@ import r2rml.engine.R2RML;
  * @version 0.1
  *
  */
-public class RefObjectMap extends R2RMLResource {
+public class RefObjectMap extends R2RMLResource implements Collectable {
 	
 	private static Logger logger = Logger.getLogger(RefObjectMap.class.getName());
 
 	private List<Join> joins = new ArrayList<Join>();
+	
+	private List<Statement> collectasslist = null;
 	
 	// We keep track of the parent via a resource, as it will be processed
 	// by the engine.
@@ -29,6 +33,7 @@ public class RefObjectMap extends R2RMLResource {
 	
 	public RefObjectMap(Resource description) {
 		super(description);
+		collectasslist = description.listProperties(RRF.collectAs).toList();
 	}
 	
 	public List<Join> getJoins() {
@@ -75,7 +80,34 @@ public class RefObjectMap extends R2RMLResource {
 			joins.add(join);
 		}
 		
+		if(collectasslist.size() > 1) {
+			logger.error("ObjectMap can only have at most one rrf:collectAs.");
+			logger.error(description);
+			return false;
+		} else if(collectasslist.size() == 1) {
+			RDFNode n = collectasslist.get(0).getObject();
+			if(!(n.isResource() && (
+					RDF.List.equals(n.asResource()) ||
+					RDF.Bag.equals(n.asResource()) ||
+					RDF.Seq.equals(n.asResource()) ||
+					RDF.Alt.equals(n.asResource())))) {
+				logger.error("rrf:collectAs must refer to RDF container or collection.");
+				logger.error(description);
+				return false;
+			}
+		}
+		
 		return true;
+	}
+
+	@Override
+	public boolean hasCollactAs() {
+		return collectasslist.size() == 1;
+	}
+
+	@Override
+	public Resource getCollectAsTermType() {
+		return collectasslist.get(0).getResource();
 	}
 	
 }

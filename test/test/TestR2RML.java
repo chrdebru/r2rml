@@ -106,6 +106,7 @@ public class TestR2RML extends TestCase {
 		Model model = engine.getDataset().getDefaultModel();
 		Model target = ModelFactory.createDefaultModel();
 		target.read("./test/resources/01.output.ttl");
+		model.write(System.out, "TURTLE");
 		assertEquals(true, model.difference(target).isEmpty());
 		assertEquals(true, target.difference(model).isEmpty());	
 	}

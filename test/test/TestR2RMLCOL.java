@@ -17,9 +17,6 @@ import r2rml.engine.R2RMLProcessor;
  */
 public class TestR2RMLCOL extends TestCase {
 
-	//private static Logger logger = Logger.getLogger(TestR2RMLCSV.class.getName());
-	//private static String connectionURL = "jdbc:derby:memory:testing";
-
 	public TestR2RMLCOL(String testName) {
 		super(testName);
 	}

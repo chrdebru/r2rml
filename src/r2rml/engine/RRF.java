@@ -25,5 +25,6 @@ public final class RRF {
 	
 	// Properties for Containers and Collections
 	public static final Property gather = ResourceFactory.createProperty(NS + "gather");
+	public static final Property collectAs = ResourceFactory.createProperty(NS + "collectAs");
 	
 }

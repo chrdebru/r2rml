@@ -7,13 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.jena.query.Dataset;
-import org.apache.jena.rdf.model.Alt;
-import org.apache.jena.rdf.model.Bag;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Seq;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.log4j.Logger;
@@ -185,16 +182,6 @@ public class TriplesMap extends R2RMLResource {
 								predicates.add(p);
 						}
 
-						// Let objects be the set of generated RDF terms that result 
-						// from applying each of the predicate-object map's object 
-						// maps (but not referencing object maps) to row
-						List<RDFNode> objects = new ArrayList<RDFNode>();
-						for(ObjectMap om : opm.getObjectMaps()) {
-							RDFNode o = om.generateRDFTerm(row); 
-							if(o != null)
-								objects.add(o);
-						}
-
 						// Let pogm be the set of graph maps of the predicate-object 
 						// map. Let predicate-object_graphs be the set of generated 
 						// RDF terms that result from applying each graph map in pogm 
@@ -209,16 +196,45 @@ public class TriplesMap extends R2RMLResource {
 						// Target graphs: If sgm and pogm are empty: rr:defaultGraph; 
 						// otherwise: union of subject_graphs and predicate-object_graphs
 						pogs.addAll(subjectGraphs);
+						
+						// Let objects be the set of generated RDF terms that result 
+						// from applying each of the predicate-object map's object 
+						// maps (but not referencing object maps) to row
+						List<RDFNode> objects = new ArrayList<RDFNode>();
+						for(ObjectMap om : opm.getObjectMaps()) {
+							RDFNode o = om.generateRDFTerm(row); 
+							if(o != null) {
+								if(om.hasCollactAs()) {
+									CollectUtil.collect(opm, om, subject, o, predicates, pogs);
+								} else {									
+									objects.add(o);
+								}
+							}
+						}
+
 						for(Property p : predicates) {
 							for(RDFNode o : objects) {
 								addTriplesToDataset(dataset, subject, p, o, pogs);
 							}
 						}
 
-
 					}
 				}
 			} // end while
+			
+			// BEGIN SUPPORT FOR THE COLUMN CASE -- OBJECT MAP
+			for(String key : CollectUtil.getCollectedKeys()) {
+				RDFNode o = CollectUtil.getObject(key);
+				Resource subject = CollectUtil.getSubject(key);
+				Set<String> pogs = CollectUtil.getPredicateObjectGraphs(key);
+				Set<Property> predicates = CollectUtil.getPredicates(key);
+				
+				for(Property p : predicates) {
+					addTriplesToDataset(dataset, subject, p, o, pogs);
+				}
+			}
+			CollectUtil.reset();
+			// END SUPPORT FOR THE COLUMN CASE -- OBJECT MAP
 
 			// For each referencing object map of a predicate-object map of 
 			// the triples map, apply the following steps:
@@ -247,49 +263,67 @@ public class TriplesMap extends R2RMLResource {
 						// from applying psm to parent_row
 						Resource object = psm.generateRDFTerm(parent_row);
 						
+						// Let predicates be the set of generated RDF terms that result 
+						// from applying each of the predicate-object map's predicate 
+						// maps to child_row
+						List<Property> predicates = new ArrayList<Property>();
+						for(PredicateMap pm : opm.getPredicateMaps()) {
+							Property p = pm.generateRDFTerm(child_row);
+							if(p != null)
+								predicates.add(p);
+						}
+
+						// Let subject_graphs be the set of generated RDF terms 
+						// that result from applying each graph map of sgm to 
+						// child_row
+						Set<String> subjectGraphs = new HashSet<String>();
+						for(GraphMap gm : sgm) {
+							Resource gmiri = gm.generateRDFTerm(child_row);
+							if(gmiri != null)
+								subjectGraphs.add(gmiri.getURI());
+						}
+
+						// Let predicate-object_graphs be the set of generated 
+						// RDF terms that result from applying each graph map in 
+						// pogm to child_row
+						Set<String> pogs = new HashSet<String>();
+						for(GraphMap gm : pogm) {
+							Resource gmiri = gm.generateRDFTerm(child_row);
+							if(gmiri != null)
+								pogs.add(gmiri.getURI());
+						}
+
+						// Target graphs: If sgm and pogm are empty: rr:defaultGraph; 
+						// otherwise: union of subject_graphs and predicate-object_graphs
+						pogs.addAll(subjectGraphs);
+						
 						// if subject or object is NULL, don't generate triples
 						if(subject != null || object != null) {
-
-							// Let predicates be the set of generated RDF terms that result 
-							// from applying each of the predicate-object map's predicate 
-							// maps to child_row
-							List<Property> predicates = new ArrayList<Property>();
-							for(PredicateMap pm : opm.getPredicateMaps()) {
-								Property p = pm.generateRDFTerm(child_row);
-								if(p != null)
-									predicates.add(p);
-							}
-
-							// Let subject_graphs be the set of generated RDF terms 
-							// that result from applying each graph map of sgm to 
-							// child_row
-							Set<String> subjectGraphs = new HashSet<String>();
-							for(GraphMap gm : sgm) {
-								Resource gmiri = gm.generateRDFTerm(child_row);
-								if(gmiri != null)
-									subjectGraphs.add(gmiri.getURI());
-							}
-
-							// Let predicate-object_graphs be the set of generated 
-							// RDF terms that result from applying each graph map in 
-							// pogm to child_row
-							Set<String> pogs = new HashSet<String>();
-							for(GraphMap gm : pogm) {
-								Resource gmiri = gm.generateRDFTerm(child_row);
-								if(gmiri != null)
-									pogs.add(gmiri.getURI());
-							}
-
-							// Target graphs: If sgm and pogm are empty: rr:defaultGraph; 
-							// otherwise: union of subject_graphs and predicate-object_graphs
-							pogs.addAll(subjectGraphs);
-							for(Property p : predicates) {
-								addTriplesToDataset(dataset, subject, p, object, pogs);
+							if(rof.hasCollactAs()) {
+								CollectUtil.collect(opm, rof, subject, object, predicates, pogs);
+							} else {
+								for(Property p : predicates) {
+									addTriplesToDataset(dataset, subject, p, object, pogs);
+								}
 							}
 						}
 					}
 				}
 			}
+			
+			// BEGIN SUPPORT FOR THE COLUMN CASE -- REF OBJECT MAP
+			for(String key : CollectUtil.getCollectedKeys()) {
+				RDFNode o = CollectUtil.getObject(key);
+				Resource subject = CollectUtil.getSubject(key);
+				Set<String> pogs = CollectUtil.getPredicateObjectGraphs(key);
+				Set<Property> predicates = CollectUtil.getPredicates(key);
+				
+				for(Property p : predicates) {
+					addTriplesToDataset(dataset, subject, p, o, pogs);
+				}
+			}
+			CollectUtil.reset();
+			// END SUPPORT FOR THE COLUMN CASE -- REF OBJECT MAP
 
 			logger.info("TriplesMap " + description + ": generated triples = " + count);
 
@@ -350,9 +384,12 @@ public class TriplesMap extends R2RMLResource {
 	}
 
 	private boolean isListOrContainer(RDFNode o) {
-		if(o.isResource()) {
+		if(o.isResource() && o.getModel() != null) {
 			Resource r = o.asResource();
-			if(r.canAs(RDFList.class) || r.canAs(Bag.class) || r.canAs(Seq.class) || r.canAs(Alt.class)) {
+			if(r.canAs(RDFList.class) || 
+				r.hasProperty(RDF.type, RDF.Bag) || 
+				r.hasProperty(RDF.type, RDF.Seq) || 
+				r.hasProperty(RDF.type, RDF.Alt)) {	
 				return true;
 			}
 		}
