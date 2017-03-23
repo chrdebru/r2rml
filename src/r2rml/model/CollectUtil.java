@@ -47,7 +47,12 @@ public class CollectUtil {
 		ObjectSet os = object_set_map.get(key);
 		
 		if(om.getCollectAsTermType().equals(RDF.List)) {
-			return ModelFactory.createDefaultModel().createList(os.toArray(new RDFNode[] {}));
+			RDFNode list = ModelFactory.createDefaultModel().createList(os.toArray(new RDFNode[] {}));
+			for(RDFNode n : os) {
+				if(n.getModel() != null)
+					list.getModel().add(n.getModel());
+			}
+			return list;
 		}
 		
 		Container c = null;
@@ -61,8 +66,11 @@ public class CollectUtil {
 		else
 			return null;
 		
-		for(RDFNode o : os)
+		for(RDFNode o : os) {
+			if(o.getModel() != null)
+				c.getModel().add(o.getModel());
 			c.add(o);
+		}
 		
 		return c;
 	}

@@ -1,0 +1,61 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix ex: <http://example.com/ns#> .
+@prefix rrf: <http://kdeg.scss.tcd.ie/ns/rrf#>
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<#TriplesMap1>
+    rr:logicalTable [ rr:tableName "PERSON" ];
+
+    rr:subjectMap [
+        rr:template "http://data.example.com/person/{ID}";
+    ];
+    
+    rr:predicateObjectMap [
+        rr:predicate ex:name;
+        rr:objectMap [ 
+        	rrf:gather (
+        		[ rrf:gather ([ rr:column "TITLE" ] ) ; ]
+        		[ rrf:gather ([ rr:column "FNAME" ] ) ; ]
+        		[ rrf:gather ([ rr:column "LNAME" ] ) ; ]
+        	) ;
+        	rr:termType rdf:Bag ;
+        ];
+    ]
+    
+    .
+    
+ <#TriplesMap2>
+    rr:logicalTable [ rr:tableName "PET" ];
+    rr:subjectMap [
+        rr:template "http://example.com/person/{OWNER}";
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:owns;
+        rr:objectMap [ 
+        	rrf:gather (
+        		[ rr:column "ID" ]
+        		[ rr:column "NAME" ]        	
+        	) ;
+        	rr:termType rdf:List ;
+        	rrf:collectAs rdf:List ;
+        ];
+    ]
+    .
+    
+  <#TriplesMap3>
+    rr:logicalTable [ rr:tableName "PET" ];
+    rr:subjectMap [
+        rr:template "http://example.com/person3/{OWNER}";
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:owns;
+        rr:objectMap [ 
+        	rrf:gather (
+        		[ rr:column "ID" ; rrf:collectAs rdf:List ;]
+        		[ rr:column "NAME" ; rrf:collectAs rdf:List ;]        	
+        	) ;
+        	rr:termType rdf:List ;
+        	
+        ];
+    ]
+    .

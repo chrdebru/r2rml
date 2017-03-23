@@ -539,13 +539,21 @@ public abstract class TermMap extends R2RMLResource {
 				if(getTermType().getURI().equals(RDF.Alt.getURI()))
 					c = ModelFactory.createDefaultModel().createAlt();
 				
-				for(Object item : items)
-					c.add(item);
+				RDFNode[] members = items.toArray(new RDFNode[] {});
+				for(RDFNode member : members) {
+					if(member.getModel() != null)
+						c.getModel().add(member.getModel());
+					c.add(member);
+				}
 				
 				return c;
 			} else if(isTermTypeList()) {
 				RDFNode[] members = items.toArray(new RDFNode[] {});
 				RDFList list = ModelFactory.createDefaultModel().createList(members);
+				for(RDFNode member : members) {
+					if(member.getModel() != null)
+						list.getModel().add(member.getModel());
+				}
 				return list;
 			}
 		}

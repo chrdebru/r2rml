@@ -37,5 +37,16 @@ public class TestR2RMLCOL extends TestCase {
 		Model model = engine.getDataset().getDefaultModel();
 		model.write(System.out, "Turtle");
 	}
+	
+	public void testExampleCSV21() {
+		Configuration configuration = new Configuration();
+		configuration.setMappingFile("./test/resources/COL02.mapping.ttl");
+		configuration.getCSVFiles().add("./test/resources/PERSON.CSV");
+		configuration.getCSVFiles().add("./test/resources/PET.CSV");
+		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+		engine.execute();
+		Model model = engine.getDataset().getDefaultModel();
+		model.write(System.out, "Turtle");
+	}
 
 }
