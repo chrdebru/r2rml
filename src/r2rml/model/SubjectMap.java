@@ -107,7 +107,10 @@ public class SubjectMap extends TermMap {
 	}
 
 	public Resource generateRDFTerm(Row row) throws R2RMLException {
-		return super.generateRDFTerm(row).asResource();
+		RDFNode r = super.generateRDFTerm(row);
+		if(r != null) 
+			return r.asResource();
+		return null;
 	}
 	
 }

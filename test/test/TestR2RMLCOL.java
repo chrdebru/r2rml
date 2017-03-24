@@ -27,22 +27,34 @@ public class TestR2RMLCOL extends TestCase {
 		BasicConfigurator.configure();
 	}
 
-	public void testExampleCSV01() {
-		Configuration configuration = new Configuration();
-		configuration.setMappingFile("./test/resources/COL01.mapping.ttl");
-		configuration.getCSVFiles().add("./test/resources/PERSON.CSV");
-		configuration.getCSVFiles().add("./test/resources/PET.CSV");
-		R2RMLProcessor engine = new R2RMLProcessor(configuration);
-		engine.execute();
-		Model model = engine.getDataset().getDefaultModel();
-		model.write(System.out, "Turtle");
-	}
+//	public void testExampleCSV01() {
+//		Configuration configuration = new Configuration();
+//		configuration.setMappingFile("./test/resources/COL01.mapping.ttl");
+//		configuration.getCSVFiles().add("./test/resources/PERSON.CSV");
+//		configuration.getCSVFiles().add("./test/resources/PET.CSV");
+//		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+//		engine.execute();
+//		Model model = engine.getDataset().getDefaultModel();
+//		model.write(System.out, "Turtle");
+//	}
+//	
+//	public void testExampleCSV02() {
+//		Configuration configuration = new Configuration();
+//		configuration.setMappingFile("./test/resources/COL02.mapping.ttl");
+//		configuration.getCSVFiles().add("./test/resources/PERSON.CSV");
+//		configuration.getCSVFiles().add("./test/resources/PET.CSV");
+//		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+//		engine.execute();
+//		Model model = engine.getDataset().getDefaultModel();
+//		model.write(System.out, "Turtle");
+//	}
 	
-	public void testExampleCSV21() {
+	public void testExampleCSV03() {
 		Configuration configuration = new Configuration();
-		configuration.setMappingFile("./test/resources/COL02.mapping.ttl");
-		configuration.getCSVFiles().add("./test/resources/PERSON.CSV");
-		configuration.getCSVFiles().add("./test/resources/PET.CSV");
+		configuration.setMappingFile("./test/resources/COL03.mapping.ttl");
+		configuration.setUser("root");
+		configuration.setPassword("root");
+		configuration.setConnectionURL("jdbc:mysql://127.0.0.1/modseditor2");
 		R2RMLProcessor engine = new R2RMLProcessor(configuration);
 		engine.execute();
 		Model model = engine.getDataset().getDefaultModel();
