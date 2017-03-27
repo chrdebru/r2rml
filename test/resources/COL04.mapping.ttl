@@ -1,0 +1,46 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix ex: <http://example.com/ns#> .
+@prefix rrf: <http://kdeg.scss.tcd.ie/ns/rrf#>
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<#AuthorsTriplesMap>
+    rr:logicalTable [ rr:tableName "COLAUTHOR" ];
+
+    rr:subjectMap [
+        rr:template "http://example.com/person/{ID}";
+    ];
+    
+    rr:predicateObjectMap [
+        rr:predicate ex:name;
+        rr:objectMap [ 
+        	rrf:gather (
+        		[ rr:column "TITLE" ]
+        		[ rr:column "FNAME" ] 
+        		[ rr:column "LNAME" ]  
+        	) ;
+        	rr:termType rdf:Bag ;
+        ];
+    ]
+    
+    .
+    
+<#BooksTriplesMap>
+    rr:logicalTable [ rr:tableName "COLBOOK" ];
+
+    rr:subjectMap [
+        rr:template "http://example.com/book/{ID}";
+    ];
+    
+    rr:predicateObjectMap [
+        rr:predicate ex:writtenby;
+        rr:objectMap [ 
+			rr:parentTriplesMap <#AuthorsTriplesMap>;
+       	 	rr:joinCondition [
+            	rr:child "ID";
+            	rr:parent "BOOKID";
+        	];
+          rrf:collectAs rdf:List ;
+        ];
+    ];
+    
+    .
