@@ -50,33 +50,45 @@ public class TestR2RMLCOL extends TestCase {
 //		model.write(System.out, "Turtle");
 //	}
 	
-	public void testExampleCSV04() {
-		Configuration configuration = new Configuration();
-		configuration.setMappingFile("./test/resources/COL04.mapping.ttl");
-		configuration.getCSVFiles().add("./test/resources/COLAUTHOR.CSV");
-		configuration.getCSVFiles().add("./test/resources/COLBOOK.CSV");
-		R2RMLProcessor engine = new R2RMLProcessor(configuration);
-		engine.execute();
-		Model model = engine.getDataset().getDefaultModel();
-		model.setNsPrefix("ex", "http://example.com/ns#");
-		model.setNsPrefix("person", "http://example.com/person/");
-		model.setNsPrefix("book", "http://example.com/book/");
-		model.setNsPrefix("rdf", RDF.uri);
-		model.write(System.out, "Turtle");
-	}
+//	public void testExampleCSV04() {
+//		Configuration configuration = new Configuration();
+//		configuration.setMappingFile("./test/resources/COL04.mapping.ttl");
+//		configuration.getCSVFiles().add("./test/resources/COLAUTHOR.CSV");
+//		configuration.getCSVFiles().add("./test/resources/COLBOOK.CSV");
+//		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+//		engine.execute();
+//		Model model = engine.getDataset().getDefaultModel();
+//		model.setNsPrefix("ex", "http://example.com/ns#");
+//		model.setNsPrefix("person", "http://example.com/person/");
+//		model.setNsPrefix("book", "http://example.com/book/");
+//		model.setNsPrefix("rdf", RDF.uri);
+//		model.write(System.out, "Turtle");
+//	}
+//	
+//	public void testExampleCSV05() {
+//		Configuration configuration = new Configuration();
+//		configuration.setMappingFile("./test/resources/COL05.mapping.ttl");
+//		configuration.getCSVFiles().add("./test/resources/COLAUTHOR.CSV");
+//		configuration.getCSVFiles().add("./test/resources/COLBOOK.CSV");
+//		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+//		engine.execute();
+//		Model model = engine.getDataset().getDefaultModel();
+//		model.setNsPrefix("ex", "http://example.com/ns#");
+//		model.setNsPrefix("person", "http://example.com/person/");
+//		model.setNsPrefix("book", "http://example.com/book/");
+//		model.setNsPrefix("rdf", RDF.uri);
+//		model.write(System.out, "Turtle");
+//	}
 	
-	public void testExampleCSV05() {
+	public void testExampleCSV03() {
 		Configuration configuration = new Configuration();
-		configuration.setMappingFile("./test/resources/COL05.mapping.ttl");
-		configuration.getCSVFiles().add("./test/resources/COLAUTHOR.CSV");
-		configuration.getCSVFiles().add("./test/resources/COLBOOK.CSV");
+		configuration.setMappingFile("./test/resources/COL03.mapping.ttl");
+		configuration.setUser("root");
+		configuration.setPassword("root");
+		configuration.setConnectionURL("jdbc:mysql://127.0.0.1/modseditor2");
 		R2RMLProcessor engine = new R2RMLProcessor(configuration);
 		engine.execute();
 		Model model = engine.getDataset().getDefaultModel();
-		model.setNsPrefix("ex", "http://example.com/ns#");
-		model.setNsPrefix("person", "http://example.com/person/");
-		model.setNsPrefix("book", "http://example.com/book/");
-		model.setNsPrefix("rdf", RDF.uri);
 		model.write(System.out, "Turtle");
 	}
 
