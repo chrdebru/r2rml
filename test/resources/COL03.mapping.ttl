@@ -38,8 +38,8 @@
 		rr:predicate madsrdf:elementList ;
 		rr:objectMap [
 			rrf:gather (
-				[ rr:template "urn:tcd:title-main-{id}" ] 
 				[ rr:template "urn:tcd:title-nonsort-{nonSortId}" ] 
+				[ rr:template "urn:tcd:title-main-{id}" ] 
 				[ rr:template "urn:tcd:title-subtitle-{subtitleId}" ] 
 				[ rr:template "urn:tcd:title-partname-{partNameId}" ] 
 				[ rr:template "urn:tcd:title-partnumber-{partNumberId}" ] 
