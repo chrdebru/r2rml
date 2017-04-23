@@ -1,7 +1,6 @@
 package test;
 
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.vocabulary.RDF;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.BeforeClass;
 
@@ -28,7 +27,7 @@ public class TestR2RMLCOL extends TestCase {
 		BasicConfigurator.configure();
 	}
 
-//	public void testExampleCSV01() {
+//	public void test01() {
 //		Configuration configuration = new Configuration();
 //		configuration.setMappingFile("./test/resources/COL01.mapping.ttl");
 //		configuration.getCSVFiles().add("./test/resources/PERSON.CSV");
@@ -39,7 +38,7 @@ public class TestR2RMLCOL extends TestCase {
 //		model.write(System.out, "Turtle");
 //	}
 //	
-//	public void testExampleCSV02() {
+//	public void test02() {
 //		Configuration configuration = new Configuration();
 //		configuration.setMappingFile("./test/resources/COL02.mapping.ttl");
 //		configuration.getCSVFiles().add("./test/resources/PERSON.CSV");
@@ -50,7 +49,7 @@ public class TestR2RMLCOL extends TestCase {
 //		model.write(System.out, "Turtle");
 //	}
 	
-//	public void testExampleCSV04() {
+//	public void test04() {
 //		Configuration configuration = new Configuration();
 //		configuration.setMappingFile("./test/resources/COL04.mapping.ttl");
 //		configuration.getCSVFiles().add("./test/resources/COLAUTHOR.CSV");
@@ -65,7 +64,7 @@ public class TestR2RMLCOL extends TestCase {
 //		model.write(System.out, "Turtle");
 //	}
 //	
-//	public void testExampleCSV05() {
+//	public void test05() {
 //		Configuration configuration = new Configuration();
 //		configuration.setMappingFile("./test/resources/COL05.mapping.ttl");
 //		configuration.getCSVFiles().add("./test/resources/COLAUTHOR.CSV");
@@ -80,12 +79,11 @@ public class TestR2RMLCOL extends TestCase {
 //		model.write(System.out, "Turtle");
 //	}
 	
-	public void testExampleCSV03() {
+	public void test03() {
 		Configuration configuration = new Configuration();
 		configuration.setMappingFile("./test/resources/COL03.mapping.ttl");
-		configuration.setUser("root");
-		configuration.setPassword("root");
-		configuration.setConnectionURL("jdbc:mysql://127.0.0.1/modseditor2");
+		configuration.getCSVFiles().add("./test/resources/COLAUTHOR.CSV");
+		configuration.getCSVFiles().add("./test/resources/COLBOOK.CSV");
 		R2RMLProcessor engine = new R2RMLProcessor(configuration);
 		engine.execute();
 		Model model = engine.getDataset().getDefaultModel();

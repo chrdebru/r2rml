@@ -2,103 +2,22 @@
 @prefix ex: <http://example.com/ns#> .
 @prefix rrf: <http://kdeg.scss.tcd.ie/ns/rrf#>
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    
+<#BooksTriplesMap>
+    rr:logicalTable [ rr:tableName "COLAUTHOR" ];
 
-@prefix modsrdf: <http://www.loc.gov/mods/modsrdf/v1/> .
-@prefix madsrdf: <http://www.loc.gov/mads/rdf/v1#> .
-
-@prefix owl: <http://www.w3.org/2002/07/owl#>
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-@prefix skos: <http://www.w3.org/2004/02/skos/core#>
-@prefix foaf: <http://xmlns.com/foaf/0.1/>
-
-<#TitleInfoPrincipal>
-	rr:logicalTable [
-		rr:sqlQuery """SELECT *,
-		IF(nonSort IS NULL, NULL, id) AS nonSortId,
-		IF(subtitle IS NULL, NULL, id) AS subtitleId,
-		IF(partNumber IS NULL, NULL, id) AS partNumberId,
-		IF(partName IS NULL, NULL, id) AS partNameId
-		FROM TitleInfo WHERE tiType IS NULL""" ;
-	] ;
-	
-	rr:subjectMap [
-		rr:template "http://data.library.tcd.ie/resource/titleinfo/{id}" ;
-		rr:class madsrdf:Title ;
-	] ;
-	
-	rr:predicateObjectMap [
-		rr:predicate rdfs:label ;
-		rr:objectMap [
-			rr:column "title" ;
-			rr:termType rr:Literal ;
-		] ;
-	] ;
-	
-	rr:predicateObjectMap [
-		rr:predicate madsrdf:elementList ;
-		rr:objectMap [
-			rrf:gather (
-				[ rr:template "urn:tcd:title-nonsort-{nonSortId}" ] 
-				[ rr:template "urn:tcd:title-main-{id}" ] 
-				[ rr:template "urn:tcd:title-subtitle-{subtitleId}" ] 
-				[ rr:template "urn:tcd:title-partname-{partNameId}" ] 
-				[ rr:template "urn:tcd:title-partnumber-{partNumberId}" ] 
-			) ;
-		] ;
-		rr:termType rdf:List ;
-	] ;
-	.
-	
-<#TitleInfoPrincipal-NonSort>
-	rr:logicalTable [
-		rr:sqlQuery "SELECT * FROM TitleInfo WHERE nonSort IS NOT NULL" ;
-	] ;
-	
-	rr:subjectMap [
-		rr:template "urn:tcd:title-nonsort-{id}" ;
-		rr:class madsrdf:NonSortElement ;
-	] ;
-	
-	rr:predicateObjectMap [
-		rr:predicate madsrdf:elementValue ;
-		rr:objectMap [
-			rr:column "nonSort" ;
-		] ;
-	] ;
-	.
-	
-<#TitleInfoPrincipal-Title>
-	rr:logicalTable [
-		rr:sqlQuery "SELECT * FROM TitleInfo" ;
-	] ;
-	
-	rr:subjectMap [
-		rr:template "urn:tcd:title-main-{id}" ;
-		rr:class madsrdf:MainTitleElement ;
-	] ;
-	
-	rr:predicateObjectMap [
-		rr:predicate madsrdf:elementValue ;
-		rr:objectMap [
-			rr:column "title" ;
-		] ;
-	] ;
-	.
-	
-<#TitleInfoPrincipal-PartName>
-	rr:logicalTable [
-		rr:sqlQuery "SELECT * FROM TitleInfo WHERE partNumber IS NOT NULL" ;
-	] ;
-	
-	rr:subjectMap [
-		rr:template "urn:tcd:title-partnumber-{id}" ;
-		rr:class madsrdf:PartNumberElement ;
-	] ;
-	
-	rr:predicateObjectMap [
-		rr:predicate madsrdf:elementValue ;
-		rr:objectMap [
-			rr:column "partNumber" ;
-		] ;
-	] ;
-	.
+    rr:subjectMap [
+        rr:template "http://example.com/book/{BOOKID}";
+    ];
+    
+    rr:predicateObjectMap [
+        rr:predicate ex:writtenby;
+        rr:objectMap [ 
+		  rrf:gatherAsNonEmpty (
+        		[ rr:column "TITLE" ]
+        	) ;
+          rrf:collectAs rdf:List ;
+        ];
+    ];
+    
+    .

@@ -84,6 +84,7 @@ public abstract class TermMap extends R2RMLResource {
 		List<Statement> columns = description.listProperties(R2RML.column).toList();
 		List<Statement> functions = description.listProperties(RRF.functionCall).toList();
 		List<Statement> gathers = description.listProperties(RRF.gather).toList();
+		gathers.addAll(description.listProperties(RRF.gatherAsNonEmpty).toList());
 
 		// Having exactly one of rr:constant, rr:column, rr:template
 		if(templates.size() + constants.size() + columns.size() + functions.size() + gathers.size() != 1) {
@@ -137,7 +138,9 @@ public abstract class TermMap extends R2RMLResource {
 				}
 			}
 		} else if(gathers.size() == 1) {
-			gather = distillGather(gathers.get(0).getObject());
+			RDFNode object = gathers.get(0).getObject();
+			boolean isGatherAsNonEmpty = gathers.get(0).getPredicate().getURI().equals(RRF.gatherAsNonEmpty.getURI());
+			gather = distillGather(object, isGatherAsNonEmpty);
 			if(gather == null)
 				return false;
 
@@ -178,21 +181,27 @@ public abstract class TermMap extends R2RMLResource {
 		return true;
 	}
 
-	private Gather distillGather(RDFNode node) {
+	/**
+	 * 
+	 * @param node the resource that contains information about the gather map
+	 * @param isGatherAsNonEmpty true if gather-as-non-empty
+	 * @return
+	 */
+	private Gather distillGather(RDFNode node, boolean isGatherAsNonEmpty) {
 		if(!node.canAs(RDFList.class)){
-			logger.error("rrf:gather should be used on a RDF collection.");
+			logger.error("rrf:gather(asNonEmpty) should be used on a RDF collection.");
 			return null;
 		}
 
 		RDFList list = node.as(RDFList.class);
 		
-		Gather gather = new Gather();
+		Gather gather = isGatherAsNonEmpty ? new GatherAsNonEmpty() : new Gather();
 
 		ExtendedIterator<RDFNode> iter = list.iterator();
 		while(iter.hasNext()) {
 			RDFNode param = iter.next();
 			if(!param.isResource()) {
-				logger.error("Nodes in rrf:gather have to be resources.");
+				logger.error("Nodes in rrf:gather(asNonEmpty) have to be resources.");
 				logger.error(description);
 				return null;
 			}
@@ -201,7 +210,7 @@ public abstract class TermMap extends R2RMLResource {
 			if(om.preProcessAndValidate()) {
 				gather.addTermMap(om);
 			} else {
-				logger.error("Something went wrong processing parameter.");
+				logger.error("Something went wrong processing element of rrf:gather(asNonEmpty).");
 				logger.error(description);
 				return null;
 			}
@@ -530,6 +539,10 @@ public abstract class TermMap extends R2RMLResource {
 					items.add(item);
 			}
 			
+			// return null if list is empty and gatherAsNonEmpty
+			if(isGatherAsNonEmpty() && items.size() == 0)
+				return null;
+			
 			if(isTermTypeContainer()) {
 				Container c = null;
 				if(getTermType().getURI().equals(RDF.Bag.getURI()))
@@ -558,5 +571,9 @@ public abstract class TermMap extends R2RMLResource {
 			}
 		}
 		return null;
+	}
+
+	private boolean isGatherAsNonEmpty() {
+		return gather instanceof GatherAsNonEmpty ;
 	}
 }
