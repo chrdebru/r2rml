@@ -9,6 +9,8 @@ $ mvn package
 $ mvn dependency:copy-dependencies
 ```
 
+Note: in order to support connection to Oracle databases, we rely on a library that is not available from the Maven repository. If you have that library not installed manually, run `mvn clean` before `mvn package` and it will install the library locally prior to packaging.
+
 The run the R2RML processor, execute the following command:
 
 ```bash
