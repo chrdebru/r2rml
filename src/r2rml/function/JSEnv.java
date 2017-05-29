@@ -45,7 +45,7 @@ public class JSEnv {
 			throws NoSuchMethodException, ScriptException {
 		Invocable invokeEngine = (Invocable) engine;
 		Object o = invokeEngine.invokeFunction(functionName, parameters);
-		return o.toString();
+		return o == null ? null : o.toString();
 	}
 
 	/**
