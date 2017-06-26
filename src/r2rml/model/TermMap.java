@@ -17,6 +17,7 @@ import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.enhanced.UnsupportedPolymorphismException;
 import org.apache.jena.iri.IRI;
 import org.apache.jena.iri.IRIFactory;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFList;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
@@ -58,7 +59,7 @@ public abstract class TermMap extends R2RMLResource {
 	private static Map<Object, Resource> blankNodeMap = new HashMap<Object, Resource>();
 
 	private String template;
-	private RDFNode constant;
+	protected RDFNode constant;
 	private String column;
 	private FunctionCall functionCall;
 
@@ -236,8 +237,8 @@ public abstract class TermMap extends R2RMLResource {
 	protected abstract boolean isChosenTermTypeValid();
 
 	/**
-	 * True if the conditions for constant values for one of the TermMap's subclasses
-	 * are met.
+	 * Returns RDF term if the conditions for constant values for one of the TermMap's 
+	 * subclasses are met. Only to be called if a TermMap has a constant.
 	 * @return 
 	 */
 	protected abstract RDFNode distillConstant(RDFNode node);
@@ -376,9 +377,13 @@ public abstract class TermMap extends R2RMLResource {
 				RDFDatatype d = R2RMLTypeMapper.getTypeByName(datatype);
 				return ResourceFactory.createTypedLiteral(value.toString(), d);
 			}
+			if(value instanceof Literal) {
+				return (Literal) value ;
+			}
 			return ResourceFactory.createTypedLiteral(value);
 		}
 		return null;
+		
 	}
 
 	/**
@@ -410,6 +415,7 @@ public abstract class TermMap extends R2RMLResource {
 	private Object getValueForRDFTerm(Row row) throws R2RMLException {
 		if(isConstantValuedTermMap()) {
 			return constant;
+//			return constant.isLiteral() ? constant.asLiteral().getValue() : constant ;
 		} else if(isColumnValuedTermMap()) {
 			return row.getObject(column);
 		} else if(isTemplateValuedTermMap()) {

@@ -1,0 +1,33 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix ex: <http://example.com/ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<#TriplesMap1>
+    rr:logicalTable [ rr:tableName "EMP" ];
+    rr:subjectMap [
+        rr:template "http://data.example.com/employee/{EMPNO}" ;
+    ];
+    
+    rr:predicateObjectMap [
+		rr:predicate rdfs:label ;
+		rr:object "test-1"^^xsd:string ;
+		rr:object "test-2"^^<http://www.w3.org/2001/XMLSchema#string> ;
+		rr:object "test-3" ;
+		rr:object "test-4"@en ;
+		rr:object 'test-5'@fr ;
+		rr:object "test-6"@fr-be ;
+    ] ;
+    
+    rr:predicateObjectMap [
+		rr:predicate ex:testNumeric ;
+		rr:object 2 ;			# xsd:integer                                                                      
+		rr:object 4.002602 ;	# xsd:decimal                                                                      
+		rr:object 1.663E-4 ;	# xsd:double  
+    ] ;
+    
+    rr:predicateObjectMap [
+		rr:predicate ex:testBoolean ;
+		rr:object false ;		# xsd:obolean                                                                      
+    ] ;
+    .

@@ -34,18 +34,24 @@ public class R2RMLMappingFactory {
 	private static String CONSTRUCTPMAPS = "PREFIX rr: <http://www.w3.org/ns/r2rml#> CONSTRUCT { ?x rr:predicateMap [ rr:constant ?y ]. } WHERE { ?x rr:predicate ?y. }";
 	private static String CONSTRUCTGMAPS = "PREFIX rr: <http://www.w3.org/ns/r2rml#> CONSTRUCT { ?x rr:graphMap [ rr:constant ?y ]. } WHERE { ?x rr:graph ?y. }";
 
+	// MAKE CONSTANTS EXPLICITELY LITERALS TO DEAL WITH TYPED CONSTANTS
+	// EVEN THOUGH IT IS OUT OF THE SPEC
+	private static String CONSTRUCTLITERAL = "PREFIX rr: <http://www.w3.org/ns/r2rml#> CONSTRUCT { ?x rr:termType rr:Literal . } WHERE { ?x rr:constant ?y . FILTER (isLiteral(?y)) }" ;
+	
 	public static R2RMLMapping createR2RMLMapping(String mappingFile, String baseIRI) {
 		R2RMLMapping mapping = new R2RMLMapping();
 
 		// We reason over the mapping to facilitate retrieval of the mappings
 		Model data = FileManager.get().loadModel(mappingFile);
-
+		
 		// We construct triples to replace the shortcuts.
 		data.add(QueryExecutionFactory.create(CONSTRUCTSMAPS, data).execConstruct());
 		data.add(QueryExecutionFactory.create(CONSTRUCTOMAPS, data).execConstruct());
 		data.add(QueryExecutionFactory.create(CONSTRUCTPMAPS, data).execConstruct());
 		data.add(QueryExecutionFactory.create(CONSTRUCTGMAPS, data).execConstruct());
-
+		
+		data.add(QueryExecutionFactory.create(CONSTRUCTLITERAL, data).execConstruct());
+		
 		Model schema = ModelFactory.createDefaultModel();
 		schema.read(R2RMLMappingFactory.class.getResourceAsStream("/r2rml.rdf"), null);
 

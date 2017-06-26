@@ -57,6 +57,8 @@ public class ObjectMap extends TermMap {
 			}
 
 			if(languages.size() == 1 && datatypes.size() == 1) {
+				System.out.println(languages);
+				System.out.println(datatypes);
 				logger.error("A TermMap cannot have both a rr:datatype and rr:language.");
 				logger.error(description);
 				return false;
@@ -89,18 +91,14 @@ public class ObjectMap extends TermMap {
 		return true;
 	}
 
-
-
 	@Override
 	protected RDFNode distillConstant(RDFNode node) {
 		// If the constant-valued term map is an object map, then its 
 		// constant value must be an IRI or literal.
-		if(isConstantValuedTermMap()) {
-			if(!node.isURIResource() && !node.isLiteral()) {
-				logger.error("Constant for ObjectMap must be an IRI or literal.");
-				logger.error(description);
-				return null;
-			}
+		if(!node.isURIResource() && !node.isLiteral()) {
+			logger.error("Constant for ObjectMap must be an IRI or literal.");
+			logger.error(description);
+			return null;
 		}
 
 		return node;
@@ -128,7 +126,7 @@ public class ObjectMap extends TermMap {
 
 		if(isColumnValuedTermMap() || datatypes.size() > 0 || languages.size() > 0) 
 			return R2RML.LITERAL;
-		
+
 		/* We assume that functions are also by default literals */
 		if(isFunctionValuedTermMap())
 			return R2RML.LITERAL;
