@@ -39,7 +39,7 @@ public class Main {
 
 			Configuration configuration = new Configuration(args[0]);
 
-			if(configuration.getMappingFile() == null) {
+			if(configuration.getConnectionURL() == null) {
 				throw new R2RMLException("A connection URL is mandatory.", null);
 			}
 
