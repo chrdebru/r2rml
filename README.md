@@ -36,7 +36,7 @@ Note that you cannot use both `CSVFiles` and `connectionURL` at the same time. F
 The directory `example` contains an example of a mapping and configuration file. The example assumes the MySQL database to be called `r2rml`, be running on `localhost` and accessible to the user `foo` with password `bar`. The configuration file looks as follows:
 
 ```
-connectionURL = jdbc:postgresql://my-postgres:5432/string
+connectionURL = jdbc:postgresql://my-postgres:5432/<db_name>
 user = foo
 password = bar
 mappingFile = /data/mapping.ttl
