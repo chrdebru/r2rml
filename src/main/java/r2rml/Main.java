@@ -29,8 +29,16 @@ import r2rml.engine.R2RMLProcessor;
  *
  */
 public class Main {
+	
+	static {
+		try { Class.forName("org.postgresql.Driver").newInstance(); } catch(Exception e) {e.printStackTrace();};
+		try { Class.forName("org.apache.drill.jdbc.Driver").newInstance(); } catch(Exception e) {e.printStackTrace();};
+		try { Class.forName("com.mysql.jdbc.Driver").newInstance(); } catch(Exception e) {e.printStackTrace();};
+		try { Class.forName("org.h2.Driver").newInstance(); } catch(Exception e) {e.printStackTrace();};
+	}
 
 	public static void main(String[] args) {
+
 
 		try {
 			if(args.length != 1) {

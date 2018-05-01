@@ -16,4 +16,4 @@ RUN mvn clean install && \
     
 WORKDIR $APP_DIR
 
-ENTRYPOINT ["java","-jar","r2rml.jar"]
+# ENTRYPOINT ["java","-jar","r2rml.jar"]
