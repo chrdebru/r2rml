@@ -3,89 +3,18 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>r2rml</groupId>
 	<artifactId>r2rml</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>R2RML Implementation</name>
-	<build>
-		<finalName>r2rml</finalName>
-		<sourceDirectory>src</sourceDirectory>
-		<resources>
-			<resource>
-				<directory>src</directory>
-				<includes>
-					<include>**/*.properties</include>
-					<include>**/*.rdf</include>
-				</includes>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.3.1</version>
-				<executions>
-					<execution>
-						<id>install-oracle-jdbc</id>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<phase>clean</phase>
-						<configuration>
-							<groupId>com.oracle.jdbc</groupId>
-							<artifactId>ojdbc7</artifactId>
-							<version>12.1.0.2</version>
-							<packaging>jar</packaging>
-							<generatePom>true</generatePom>
-							<createChecksum>true</createChecksum>
-							<file>${project.basedir}/lib/ojdbc7.jar</file>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>dependency/</classpathPrefix>
-							<mainClass>r2rml.Main</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.4.3</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<finalName>r2rml-fat</finalName>
-							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>r2rml.Main</mainClass>
-								</transformer>
-							</transformers>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+	<organization>
+		<name>Adapt Centre, Trinity College Dublin</name>
+		<url>http://www.adaptcentre.ie/</url>
+	</organization>
+	
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
@@ -123,11 +52,13 @@
 			<artifactId>postgresql</artifactId>
 			<version>9.1-901.jdbc4</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>com.oracle.jdbc</groupId>
 			<artifactId>ojdbc7</artifactId>
 			<version>12.1.0.2</version>
 		</dependency>
+		 -->
 		<!-- h2 allows us to create tables from CSV files in an easy way -->
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -135,8 +66,32 @@
 			<version>1.4.193</version>
 		</dependency>
 	</dependencies>
-	<organization>
-		<name>Adapt Centre, Trinity College Dublin</name>
-		<url>http://www.adaptcentre.ie/</url>
-	</organization>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>r2rml.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
 </project>
