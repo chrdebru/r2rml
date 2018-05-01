@@ -2,27 +2,18 @@
 
 ## Building and using the code
 
-To build the project and copy its dependencies, execute
+### To build the project and copy its dependencies, execute
 
 ```bash
-$ mvn package
-$ mvn dependency:copy-dependencies
+$ docker build -t r2rml .
 ```
 
-Note: in order to support connection to Oracle databases, we rely on a library that is not available from the Maven repository. If you have that library not installed manually, run `mvn clean` before `mvn package` and it will install the library locally prior to packaging.
-
-The run the R2RML processor, execute the following command:
+### The run the R2RML processor, execute the following command:
 
 ```bash
-$ java -jar r2rml.jar config.properties
+$ docker run -it --rm -v <local dir>:/data r2rml /data/config.properties
 ```
-A fat jar is also provided with the [Apache Maven Shade Plugin](https://maven.apache.org/plugins/maven-shade-plugin/). It does not depend on the `dependency` folder and can be executed as follows:
-
-```bash
-$ java -jar r2rml-fat.jar config.properties
-```
-
-Where `config.properties` is a properties file containing:
+Where `config.properties` is a properties file (in this case mapped through /data to you local dir) containing:
 
 - `connectionURL`, a JDBC connection URL to a database (required)
 - `user`, username for the user connecting to the database
@@ -46,8 +37,8 @@ The directory `example` contains an example of a mapping and configuration file.
 connectionURL = jdbc:mysql://localhost/r2rml
 user = foo
 password = bar
-mappingFile = mapping.ttl
-outputFile = output.ttl
+mappingFile = /data/mapping.ttl
+outputFile = /data/output.ttl
 format = TURTLE
 ```   
 
