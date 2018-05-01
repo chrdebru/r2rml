@@ -36,13 +36,14 @@ Note that you cannot use both `CSVFiles` and `connectionURL` at the same time. F
 The directory `example` contains an example of a mapping and configuration file. The example assumes the MySQL database to be called `r2rml`, be running on `localhost` and accessible to the user `foo` with password `bar`. The configuration file looks as follows:
 
 ```
-connectionURL = jdbc:postgresql://postgres:5432/string
+connectionURL = jdbc:postgresql://my-postgres:5432/string
 user = foo
 password = bar
 mappingFile = /data/mapping.ttl
 outputFile = /data/output.ttl
 format = TURTLE
 ```   
+**Hint:** my-postgres is the name of the link from the docker command above
 
 The output, after passing the properties file as an argument to the R2RML processor, should look as follows:
 
