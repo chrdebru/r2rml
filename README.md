@@ -11,7 +11,7 @@ $ docker build -t r2rml .
 ### The run the R2RML processor, execute the following command:
 
 ```bash
-$ docker run -it --rm --link [some-progress](https://hub.docker.com/_/postgres/):my-progress -v <local dir>:/data r2rml /data/config.properties
+$ docker run -it --rm --link some-progress:my-progress -v <local dir>:/data r2rml /data/config.properties
 ```
 **Hint:** check out [official postgresql docker documentation](https://hub.docker.com/_/postgres/)
 
