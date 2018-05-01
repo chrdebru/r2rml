@@ -40,7 +40,7 @@ connectionURL = jdbc:postgresql://my-postgres:5432/string
 user = foo
 password = bar
 mappingFile = /data/mapping.ttl
-outputFile = /data/output.ttl
+outputFile = /data/output.ttl.gz
 format = TURTLE
 ```   
 **Hint:** my-postgres is the name of the link from the docker command above

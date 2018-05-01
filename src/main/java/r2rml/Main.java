@@ -1,15 +1,15 @@
 package r2rml;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.jena.iri.IRIFactory;
 import org.apache.jena.query.Dataset;
@@ -125,11 +125,22 @@ public class Main {
 		// use a different encoding for the writers...		
 		Path path = Paths.get(file.getPath());
 		
-		if(!file.exists()) file.createNewFile();
+		if(!file.exists()) 
+			file.createNewFile();
+		else
+			System.out.println("Outputfile already exists. It will be overwritten.");
 		
-		BufferedWriter bw = Files.newBufferedWriter(path, StandardCharsets.UTF_8, append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING);
-		model.write(bw, format);
-		bw.close();
+		// BufferedWriter bw = Files.newBufferedWriter(path, StandardCharsets.UTF_8, append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING);
+		
+		
+		OutputStream os = new FileOutputStream(file, false);
+		if(file.getName().endsWith(".gz"))
+			os = new GZIPOutputStream(os);
+		
+		OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8);
+		model.write(osw, format);
+		os.close();
+		
 	}
 
 	private static void writeDatasetAsFile(
