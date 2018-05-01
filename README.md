@@ -11,7 +11,7 @@ $ docker build -t r2rml .
 ### The run the R2RML processor, execute the following command:
 
 ```bash
-$ docker run -it --rm --link [some-progress](https://hub.docker.com/_/postgres/):my-progress -v <local dir>:/data r2rml /data/config.properties
+$ docker run -it --rm --link some-progress:my-progress -v <local dir>:/data r2rml /data/config.properties
 ```
 **Hint:** check out [official postgresql docker documentation](https://hub.docker.com/_/postgres/)
 
@@ -36,7 +36,7 @@ Note that you cannot use both `CSVFiles` and `connectionURL` at the same time. F
 The directory `example` contains an example of a mapping and configuration file. The example assumes the MySQL database to be called `r2rml`, be running on `localhost` and accessible to the user `foo` with password `bar`. The configuration file looks as follows:
 
 ```
-connectionURL = jdbc:postgresql://my-postgres:5432/string
+connectionURL = jdbc:postgresql://my-postgres:5432/<db_name>
 user = foo
 password = bar
 mappingFile = /data/mapping.ttl
