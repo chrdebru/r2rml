@@ -2,4 +2,4 @@ Dockerfile
 .git
 .gitignore
 *.md
-example/
+example
