@@ -61,12 +61,66 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.drill.exec</groupId>
-			<artifactId>drill-jdbc</artifactId>
+			<artifactId>drill-jdbc-all</artifactId>
 			<version>1.13.0</version>
 		</dependency>
 	</dependencies>
 
+<!-- -->
+<build>
+<plugins>
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-shade-plugin</artifactId>
+	<version>3.1.0</version>
+<configuration>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.RSA</exclude>
+              </excludes>
+            </filter>
+          </filters>
+        </configuration>
+	<executions>
+		<execution>
+			<phase>package</phase>
+			<goals>
+				<goal>shade</goal>
+			</goals>
+			<configuration>
+				<transformers>
+<transformer
+implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+          <resource>reference.conf</resource>
+     </transformer>
+     <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+      <mainClass>r2rml.Main</mainClass>
+</transformer>
+				</transformers>
+			</configuration>
+		</execution>
+	</executions>
+</plugin>
+</plugins>
+</build>
+<!-- -->
+
+<!--
 	<build>
+
+<resources>
+<resource>
+  <directory>src/main/resources</directory>
+    <includes>
+      <include>*.conf</include>
+    </includes>
+</resource>
+</resources>
+
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -82,8 +136,8 @@
 				</configuration>
 				<executions>
 					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
+						<id>make-assembly</id> 
+						<phase>package</phase> 
 						<goals>
 							<goal>single</goal>
 						</goals>
@@ -92,5 +146,6 @@
 			</plugin>
 		</plugins>
 	</build>
+-->
 
 </project>
