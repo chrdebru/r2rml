@@ -8,7 +8,7 @@ pipeline {
     }
     stage('build') {
       steps {
-        sh 'docker build --no-cache -t r2rml .'
+        sh 'docker build -t r2rml .'
       }
     }
   }
