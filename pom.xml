@@ -128,6 +128,11 @@
 			<artifactId>ojdbc7</artifactId>
 			<version>12.1.0.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.drill.exec</groupId>
+			<artifactId>drill-jdbc</artifactId>
+			<version>1.13.0</version>
+		</dependency>
 		<!-- h2 allows us to create tables from CSV files in an easy way -->
 		<dependency>
 			<groupId>com.h2database</groupId>
