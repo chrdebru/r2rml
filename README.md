@@ -102,9 +102,7 @@ This implementation of R2RML re-implemented the ideas presented in [1], allowing
 ```
 
 ## License
-This implementation of R2RML is written by [Christophe Debruyne](http://www.christophedebruyne.be/).
-
-This code is copyrighted by [ADAPT - Trinity College Dublin](http://www.adaptcentre.ie/) and released under the [MIT license](http://opensource.org/licenses/MIT).
+This implementation of R2RML is written by [Christophe Debruyne](http://www.christophedebruyne.be/) and released under the [MIT license](http://opensource.org/licenses/MIT).
 
 ## References
 
