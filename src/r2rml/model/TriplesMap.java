@@ -186,8 +186,8 @@ public class TriplesMap extends R2RMLResource {
 						// maps (but not referencing object maps) to row
 						List<RDFNode> objects = new ArrayList<RDFNode>();
 						for(ObjectMap om : opm.getObjectMaps()) {
-							RDFNode o = om.generateRDFTerm(row); 
-							if(o != null)
+							RDFNode o = om.generateRDFTerm(row);
+							if(o != null && !o.toString().equals(""))
 								objects.add(o);
 						}
 
@@ -244,7 +244,7 @@ public class TriplesMap extends R2RMLResource {
 						Resource object = psm.generateRDFTerm(parent_row);
 						
 						// if subject or object is NULL, don't generate triples
-						if(subject != null || object != null) {
+						if(subject != null || object != null || !object.toString().equals("")) {
 
 							// Let predicates be the set of generated RDF terms that result 
 							// from applying each of the predicate-object map's predicate 
