@@ -39,8 +39,8 @@ public class Main {
 
 			Configuration configuration = new Configuration(args[0]);
 
-			if(configuration.getConnectionURL() == null) {
-				throw new R2RMLException("A connection URL is mandatory.", null);
+			if(configuration.getConnectionURL() == null && configuration.getCSVFiles().size() == 0) {
+				throw new R2RMLException("A connection URL or CVS files are mandatory.", null);
 			}
 
 			if(configuration.getMappingFile() == null) {
