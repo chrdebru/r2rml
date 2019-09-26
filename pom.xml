@@ -139,6 +139,11 @@
 			<artifactId>h2</artifactId>
 			<version>1.4.193</version>
 		</dependency>
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>3.1.0</version>
+		</dependency>
 	</dependencies>
 	<organization>
 		<name>Adapt Centre, Trinity College Dublin</name>

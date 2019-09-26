@@ -18,6 +18,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 
 import r2rml.engine.Configuration;
+import r2rml.engine.CliOptions;
 import r2rml.engine.R2RMLException;
 import r2rml.engine.R2RMLProcessor;
 
@@ -33,11 +34,14 @@ public class Main {
 	public static void main(String[] args) {
 
 		try {
+			Configuration configuration = null;
 			if(args.length != 1) {
-				throw new R2RMLException("Only and exactly one config file needs to be passed as an argument", null);
+				// If more than 1 arguments, we load config from arguments using picocli
+				CliOptions cli = new CliOptions(args);
+				configuration = new Configuration(cli);
+			} else {
+				configuration = new Configuration(args[0]);
 			}
-
-			Configuration configuration = new Configuration(args[0]);
 
 			if(configuration.getConnectionURL() == null && configuration.getCSVFiles().size() == 0) {
 				throw new R2RMLException("A connection URL or CVS files are mandatory.", null);

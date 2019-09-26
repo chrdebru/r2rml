@@ -42,27 +42,40 @@ Note that you cannot use both `CSVFiles` and `connectionURL` at the same time. F
 
 The directory `example` contains an example of a mapping and configuration file. The example assumes the MySQL database to be called `r2rml`, be running on `localhost` and accessible to the user `foo` with password `bar`. The configuration file looks as follows:
 
-```
+```properties
 connectionURL = jdbc:mysql://localhost/r2rml
 user = foo
 password = bar
 mappingFile = mapping.ttl
 outputFile = output.ttl
 format = TURTLE
-```   
+```
 
 The output, after passing the properties file as an argument to the R2RML processor, should look as follows:
 
-```
+```turtle
 <http://data.example.com/employee/7369>
         a                             <http://example.com/ns#Employee> ;
         <http://example.com/ns#name>  "SMITH" .
 ```
 
+## Run with command line arguments
+
+R2RML can be run with command line arguments similar to the configuration properties. 
+
+```bash
+$ java -jar r2rml.jar --connectionURL jdbc:mysql://localhost/r2rml \
+  --user foo --password bar \
+  --mappingFile mapping.ttl \
+  --outputFile output.ttl \
+  --format TURTLE
+```
+
 ## Function with R2RML-F
+
 This implementation of R2RML re-implemented the ideas presented in [1], allowing one to declare and use functions in ECMAScript as (Function Valued) TermMaps in the mapping. R2RML-F extends R2RML's vocabulary with predicates for declaring functions, function calls and parameter bindings. These are declared in the namespace [rrf](http://kdeg.scss.tcd.ie/ns/rrf/index.html).
 
-```
+```turtle
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
 @prefix ex: <http://example.com/ns#> .
 @prefix rrf: <http://kdeg.scss.tcd.ie/ns/rrf#>
