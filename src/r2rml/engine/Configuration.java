@@ -57,6 +57,26 @@ public class Configuration {
 		}
 	}
 	
+	// Getting configuration from argument (picocli CliOptions)
+	public Configuration(CliOptions cli) throws R2RMLException {
+		connectionURL = cli.connectionURL;
+		user = cli.user;
+		password = cli.password;
+		mappingFile = cli.mappingFile;
+		outputFile = cli.outputFile;
+		format = cli.format;	// TURTLE default define in CliOptions
+		filePerGraph = cli.filePerGraph;
+		baseIRI = cli.baseIRI;
+		
+		String files = cli.CSVFiles;
+		if(files != null && !"".equals(files)) {
+			StringTokenizer tk = new StringTokenizer(files, ";");
+			while(tk.hasMoreTokens()) {
+				CSVFiles.add(tk.nextToken());
+			}
+		}
+	}
+	
 	public Configuration() {
 		
 	}
