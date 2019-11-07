@@ -16,11 +16,11 @@ import r2rml.engine.R2RMLProcessor;
  * @author Christophe Debruyne
  *
  */
-public class TestR2RMLMySQL extends TestCase {
+public class Skip_TestR2RMLMySQL extends TestCase {
 
 	private static String connectionURL = "jdbc:mysql://localhost/r2rml";
 
-	public TestR2RMLMySQL(String testName) {
+	public Skip_TestR2RMLMySQL(String testName) {
 		super(testName);
 	}
 
