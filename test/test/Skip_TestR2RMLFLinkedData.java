@@ -22,12 +22,12 @@ import r2rml.engine.R2RMLProcessor;
  * @author Christophe Debruyne
  *
  */
-public class TestR2RMLFLinkedData extends TestCase {
+public class Skip_TestR2RMLFLinkedData extends TestCase {
 
-	private static Logger logger = Logger.getLogger(TestR2RMLFLinkedData.class.getName());
+	private static Logger logger = Logger.getLogger(Skip_TestR2RMLFLinkedData.class.getName());
 	private static String connectionURL = "jdbc:derby:memory:testing";
 
-	public TestR2RMLFLinkedData(String testName) {
+	public Skip_TestR2RMLFLinkedData(String testName) {
 		super(testName);
 	}
 
