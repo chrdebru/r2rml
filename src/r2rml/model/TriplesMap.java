@@ -244,7 +244,7 @@ public class TriplesMap extends R2RMLResource {
 						Resource object = psm.generateRDFTerm(parent_row);
 						
 						// if subject or object is NULL, don't generate triples
-						if(subject != null || object != null) {
+						if(subject != null && object != null) {
 
 							// Let predicates be the set of generated RDF terms that result 
 							// from applying each of the predicate-object map's predicate 
