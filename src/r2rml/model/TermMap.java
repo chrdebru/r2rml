@@ -1,6 +1,5 @@
 package r2rml.model;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +32,7 @@ import r2rml.engine.R2RMLException;
 import r2rml.engine.R2RMLTypeMapper;
 import r2rml.engine.RRF;
 import r2rml.function.JSEnv;
+import r2rml.util.IRISafe;
 
 /**
  * TermMap Class.
@@ -323,21 +323,13 @@ public abstract class TermMap extends R2RMLResource {
 		}
 
 		else if(isTermTypeIRI()) {
-			/* Otherwise, if the term map's term type is rr:IRI: 1. Let value 
-			 * be the natural RDF lexical form corresponding to value. 2. If 
-			 * value is a valid absolute IRI [RFC3987], then return an IRI 
-			 * generated from value. 3. Otherwise, prepend value with the base
-			 * IRI. If the result is a valid absolute IRI [RFC3987], then 
-			 * return an IRI generated from the result. 4. Otherwise, raise a 
-			 * data error.
-			 */
 			IRI iri = IRIFactory.iriImplementation().create(value.toString());
 			if(iri.isAbsolute())
-				return ResourceFactory.createResource(convertToIRISafeVersion(iri));
+				return ResourceFactory.createResource(iri.toString());
 			
 			iri = IRIFactory.iriImplementation().create(baseIRI + value);
 			if(iri.isAbsolute())
-				return ResourceFactory.createResource(convertToIRISafeVersion(iri));
+				return ResourceFactory.createResource(iri.toString());
 			
 			throw new R2RMLException("Data error. " + baseIRI + value + " is not a valid absolute IRI", null);
 			
@@ -386,36 +378,9 @@ public abstract class TermMap extends R2RMLResource {
 		
 	}
 
-	/**
-	 * Private method to create safe IRIs. It does percent encoding. According
-	 * to the R2RML Standard, however, some characters (like kanji) should not
-	 * be percent encoded. This is what jena does. We need to find a library
-	 * that better complies with the standard.
-	 * 
-	 * 42					-> 42						OK
-	 * Hello World!			-> Hello%20World%21 		OK
-	 * 2011-08-23T22:17:00Z	-> 2011-08-23T22%3A17%3A00Z	OK
-	 * ~A_17.1-2			-> ~A_17.1-2				OK
-	 * 葉篤正					-> 葉篤正						NOK!
-	 * 
-	 * TODO: Better compliant safe IRI conversion.
-	 * 
-	 * @param iri
-	 * @return
-	 * @throws R2RMLException
-	 */
-	private String convertToIRISafeVersion(IRI iri) throws R2RMLException {
-		try {
-			return iri.toASCIIString();
-		} catch (MalformedURLException e) {
-			throw new R2RMLException("Problem generating safe IRI " + iri, e);
-		}
-	}
-
 	private Object getValueForRDFTerm(Row row) throws R2RMLException {
 		if(isConstantValuedTermMap()) {
 			return constant;
-//			return constant.isLiteral() ? constant.asLiteral().getValue() : constant ;
 		} else if(isColumnValuedTermMap()) {
 			return row.getObject(column);
 		} else if(isTemplateValuedTermMap()) {
@@ -423,11 +388,14 @@ public abstract class TermMap extends R2RMLResource {
 			for(String reference : getReferencedColumns()) {
 				Object object = row.getObject(reference);
 				// If one of the values is NULL, we don't generate the term.
-				// We need to check if this is the desired approach for templates
-				// with multiple variables.
 				if(object == null)
 					return null;
+				// If the term type is rr:IRI, then replace the pair of curly braces with an IRI-safe 
+				// version of value; otherwise, replace the pair of curly braces with value				
 				String string = object.toString();
+				if(isTermTypeIRI())
+					string = IRISafe.toIRISafe(string);
+				
 				// first argument is a regular expression, therefore we
 				// have to escape the curly braces, but in a string that
 				// also means escaping the escape character.
