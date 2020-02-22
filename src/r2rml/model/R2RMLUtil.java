@@ -1,6 +1,7 @@
 package r2rml.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
@@ -45,13 +46,8 @@ public class R2RMLUtil {
 		
 		String query = "SELECT * FROM (" + cquery + ") AS child, ";
         query += "(" + pquery + ") AS parent WHERE ";
-        
-        for(Join join : joins) {
-        	query += "child." + join.getChild() + "=";
-        	query += "parent." + join.getParent() + " AND ";
-        }
-        
-        query += "TRUE";
+
+		query += joins.stream().map(join -> "child." + join.getChild() + "=parent." + join.getParent()).collect(Collectors.joining(" AND "));
         
         return query;
 	}
