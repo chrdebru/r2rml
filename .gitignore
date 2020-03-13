@@ -24,3 +24,5 @@ target/
 derby.log
 
 dependency-reduced-pom.xml
+
+.settings/*

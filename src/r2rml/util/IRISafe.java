@@ -15,7 +15,7 @@ public class IRISafe {
 		StringBuffer sb = new StringBuffer();
 		for(char c : string.toCharArray()) {
 			if(inIUNRESERVED(c)) sb.append(c);
-			else sb.append('%' + Integer.toHexString((int) c));
+			else sb.append('%' + Integer.toHexString((int) c).toUpperCase());
 		}
 		return sb.toString();
 	}
