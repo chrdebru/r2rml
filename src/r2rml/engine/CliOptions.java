@@ -34,6 +34,9 @@ public class CliOptions {
 	@Option(names = {"-b", "--baseIRI"}, description = "Used in resolving relative IRIs produced by the R2RML mapping" )
 	String baseIRI = null;
 	
+	@Option(names = {"-p", "--prefixFile"}, description = "The RDF file used for prefixes." )
+	String prefixFile = null;
+	
 	@Option(names = {"--CSVFiles"}, description = "A list of paths to CSV files that are separated by semicolons (cannot be used with connectionURL)" )
 	String CSVFiles = null;
 
@@ -48,7 +51,6 @@ public class CliOptions {
 		} catch (CommandLine.ParameterException pe) {
 			System.out.println(pe.getMessage());
 			new CommandLine(this).usage(System.out);
-			// System.out.println("  * required parameter");
 			System.exit(64);
 		}
 	}

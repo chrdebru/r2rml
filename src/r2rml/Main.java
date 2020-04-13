@@ -16,9 +16,10 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.util.FileManager;
 
-import r2rml.engine.Configuration;
 import r2rml.engine.CliOptions;
+import r2rml.engine.Configuration;
 import r2rml.engine.R2RMLException;
 import r2rml.engine.R2RMLProcessor;
 
@@ -53,6 +54,11 @@ public class Main {
 
 			R2RMLProcessor engine = new R2RMLProcessor(configuration);
 			engine.execute();
+			
+			// if there is a problem with this method, we do not throw an exception but abort the process.
+			if(configuration.getPrefixFile() != null) {
+				addPrefixMappingFromFileToGraphs(configuration.getPrefixFile(), engine);
+			}
 
 			String format = configuration.getFormat();
 
@@ -69,6 +75,21 @@ public class Main {
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			System.exit(-1);
+		}
+	}
+
+	private static void addPrefixMappingFromFileToGraphs(String prefixFile, R2RMLProcessor engine) {
+		try {
+			Model m = FileManager.get().loadModel(prefixFile);
+			Dataset ds = engine.getDataset();			
+			ds.getDefaultModel().setNsPrefixes(m.getNsPrefixMap());
+			Iterator<String> graphs = ds.listNames();
+			while(graphs.hasNext()) {
+				ds.getNamedModel(graphs.next()).setNsPrefixes(m.getNsPrefixMap());
+			}
+		} catch (Exception e) {
+			System.out.println("Something went wrong fetching prefixes from a file.");
+			System.out.println("We are not aborting the process, but we are aborting the prefix mappings.");
 		}
 	}
 

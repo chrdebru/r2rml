@@ -26,6 +26,7 @@ public class Configuration {
 	private String password = null;
 	private String mappingFile = null;
 	private String outputFile = null;
+	private String prefixFile = null;
 	private String format = null;
 	private String baseIRI = null;
 	private boolean filePerGraph = false;
@@ -44,6 +45,7 @@ public class Configuration {
 		password = properties.getProperty("password");
 		mappingFile = properties.getProperty("mappingFile");
 		outputFile = properties.getProperty("outputFile");
+		prefixFile = properties.getProperty("prefixFile");
 		format = properties.getProperty("format", "TURTLE");
 		setFilePerGraph("true".equals(properties.getProperty("filePerGraph", "false").toLowerCase()));
 		baseIRI = properties.getProperty("baseIRI");
@@ -165,6 +167,14 @@ public class Configuration {
 
 	public boolean hasCSVFiles() {
 		return CSVFiles != null && CSVFiles.size() > 0;
+	}
+
+	public String getPrefixFile() {
+		return prefixFile;
+	}
+
+	public void setPrefixFile(String prefixFile) {
+		this.prefixFile = prefixFile;
 	}
 	
 }
