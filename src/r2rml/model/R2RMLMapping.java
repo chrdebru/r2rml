@@ -34,13 +34,11 @@ public class R2RMLMapping {
 	public boolean generateTriples(DB database, Dataset dataset) {
 		for(TriplesMap tm : triplesMaps.values()) {
 			if(!tm.generateTriples(database, dataset, triplesMaps)){
-				// Something went wrong, abort.
+				System.out.println("Something went wrong processing: " + tm);
 				return false;
 			}
 		}
 		return true;
 	}
-	
-	
 
 }
