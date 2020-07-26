@@ -5,6 +5,7 @@
 To build the project and copy its dependencies, execute
 
 ```bash
+$ mvn clean
 $ mvn package
 $ mvn dependency:copy-dependencies
 ```
