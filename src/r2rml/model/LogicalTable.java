@@ -94,7 +94,7 @@ public class LogicalTable extends R2RMLResource {
 			}
 			
 			// All clear
-			sqlQuery = n.toString().trim();
+			sqlQuery = n.asLiteral().getValue().toString().trim();
 			
 			// Some relational databases do not support semicolons at the end
 			// of a subquery, so remove one when it appears. Technically, one

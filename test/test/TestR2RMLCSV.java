@@ -58,5 +58,33 @@ public class TestR2RMLCSV extends TestCase {
 		assertEquals(true, model.difference(target).isEmpty());
 		assertEquals(true, target.difference(model).isEmpty());	
 	}
+	
+	public void testExampleCSV03() {
+		Configuration configuration = new Configuration();
+		configuration.setMappingFile("./test/resources/CSV01query.mapping.ttl");
+		configuration.getCSVFiles().add("./test/resources/EMP.CSV");
+		configuration.getCSVFiles().add("./test/resources/DEPT.CSV");
+		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+		engine.execute();
+		Model model = engine.getDataset().getDefaultModel();
+		Model target = ModelFactory.createDefaultModel();
+		target.read("./test/resources/CSV01.output.ttl");
+		assertEquals(true, model.difference(target).isEmpty());
+		assertEquals(true, target.difference(model).isEmpty());	
+	}
+	
+	public void testExampleCSV04() {
+		Configuration configuration = new Configuration();
+		configuration.setMappingFile("./test/resources/CSV01multiline.mapping.ttl");
+		configuration.getCSVFiles().add("./test/resources/EMP.CSV");
+		configuration.getCSVFiles().add("./test/resources/DEPT.CSV");
+		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+		engine.execute();
+		Model model = engine.getDataset().getDefaultModel();
+		Model target = ModelFactory.createDefaultModel();
+		target.read("./test/resources/CSV01.output.ttl");
+		assertEquals(true, model.difference(target).isEmpty());
+		assertEquals(true, target.difference(model).isEmpty());	
+	}
 
 }

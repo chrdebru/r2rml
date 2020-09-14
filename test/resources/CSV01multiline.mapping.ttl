@@ -1,0 +1,20 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix ex: <http://example.com/ns#> .
+
+<#TriplesMap1>
+    rr:logicalTable [ rr:sqlQuery """
+    	SELECT 
+    		"EMPNO", 
+    		"ENAME" 
+    	FROM EMP""" ];
+    rr:subjectMap [
+        rr:template "http://data.example.com/employee/{EMPNO}";
+        rr:class ex:Employee;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:name;
+        rr:objectMap [ rr:column "ENAME" ];
+    ].
+	
+<#a> rr:objectMap <#b> .
+<#b> rr:column "ENAME" .
