@@ -86,5 +86,19 @@ public class TestR2RMLCSV extends TestCase {
 		assertEquals(true, model.difference(target).isEmpty());
 		assertEquals(true, target.difference(model).isEmpty());	
 	}
+	
+	public void testExampleCSV05() {
+		Configuration configuration = new Configuration();
+		configuration.setMappingFile("./test/resources/CSV02quoted.mapping.ttl");
+		configuration.getCSVFiles().add("./test/resources/EMP.CSV");
+		configuration.getCSVFiles().add("./test/resources/DEPT.CSV");
+		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+		engine.execute();
+		Model model = engine.getDataset().getDefaultModel();
+		Model target = ModelFactory.createDefaultModel();
+		target.read("./test/resources/CSV02.output.ttl");
+		assertEquals(true, model.difference(target).isEmpty());
+		assertEquals(true, target.difference(model).isEmpty());	
+	}
 
 }
