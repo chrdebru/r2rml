@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import javax.script.ScriptException;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.enhanced.UnsupportedPolymorphismException;
 import org.apache.jena.iri.IRI;
