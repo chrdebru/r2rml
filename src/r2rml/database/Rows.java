@@ -50,10 +50,12 @@ public class Rows {
 		try {
 			if(resultset.next())
 				return new Row(resultset, indexMap);
+
+			resultset.close();
+			return null;
 		} catch (SQLException e) {
 			throw new R2RMLException(e.getMessage(), e);
 		}
-		return null;
 	}
 	
 	public Row projectCurrentRow(int from, int to) throws R2RMLException {

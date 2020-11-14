@@ -215,6 +215,8 @@ public class TriplesMap extends R2RMLResource {
 					}
 				}
 			} // end while
+			
+			database.closeRows(rows);
 
 			// For each referencing object map of a predicate-object map of 
 			// the triples map, apply the following steps:
@@ -284,8 +286,11 @@ public class TriplesMap extends R2RMLResource {
 							}
 						}
 					}
+					
+					database.closeRows(rows2);
 				}
 			}
+			
 
 			logger.info("TriplesMap " + description + ": generated triples = " + count);
 

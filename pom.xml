@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>r2rml</groupId>
 	<artifactId>r2rml</artifactId>
-	<version>1.2.2</version>
+	<version>1.2.3b</version>
 	<name>R2RML Implementation</name>
 
 	<properties>

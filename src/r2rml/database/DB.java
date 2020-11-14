@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import r2rml.engine.R2RMLException;
 
@@ -19,18 +19,21 @@ import r2rml.engine.R2RMLException;
 public class DB {
 
 	private Connection connection = null;
-	private List<Statement> statements = new ArrayList<Statement>();
-
+	//private List<Statement> statements = new ArrayList<Statement>();
+	private Map<Rows, Statement> statements = new HashMap<Rows, Statement>();
+	
 	public DB(Connection connection) {
 		this.connection = connection;
 	}
 
+	@SuppressWarnings("resource") // connections are closed elsewhere in the code
 	public Rows getRows(String query) throws R2RMLException {
 		try{
 			Statement statement = connection.createStatement();
-			statements.add(statement);
 			ResultSet resultset = statement.executeQuery(query);
-			return new Rows(resultset);
+			Rows rows = new Rows(resultset);
+			statements.put(rows, statement);
+			return rows;
 		} catch(SQLException e) {
 			throw new R2RMLException(e.getMessage(), e);
 		}
@@ -39,7 +42,7 @@ public class DB {
 	public void close() throws R2RMLException {
 		if (!statements.isEmpty()) {
 			try {
-				for(Statement statement : statements) {
+				for(Statement statement : statements.values()) {
 					statement.close();
 				}
 				statements.clear();
@@ -48,6 +51,18 @@ public class DB {
 			}
 		}
 		
+	}
+
+	public void closeRows(Rows rows) throws R2RMLException {
+		Statement s = statements.get(rows);
+		if(s != null) {
+			try {
+				s.close();
+			} catch (SQLException e) {
+				throw new R2RMLException(e.getMessage(), e);
+			}
+		}
+		statements.remove(rows);
 	}
 
 }
