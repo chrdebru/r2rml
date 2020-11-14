@@ -34,10 +34,21 @@ public class Configuration {
 
 	public Configuration(String path) throws R2RMLException {
 		Properties properties = new Properties();
+		
+		FileInputStream inputstream = null;
 		try {
-			properties.load(new FileInputStream(new File(path)));
+			inputstream = new FileInputStream(new File(path));
+			properties.load(inputstream);
 		} catch (IOException e) {
 			throw new R2RMLException(e.getMessage(), e);
+		} finally {
+		    if (inputstream != null) {
+		    	try {
+					inputstream.close();
+				} catch (IOException e) {
+					throw new R2RMLException("Problem closing the configuration file.", e);
+				}
+		    }
 		}
 		
 		connectionURL = properties.getProperty("connectionURL");
