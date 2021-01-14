@@ -2,6 +2,8 @@
 
 ## Building and using the code
 
+Note: precompiled packages can be found [here](https://github.com/chrdebru/r2rml-distributions).
+
 To build the project and copy its dependencies, execute
 
 ```bash
