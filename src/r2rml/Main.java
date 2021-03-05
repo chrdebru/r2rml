@@ -69,7 +69,7 @@ public class Main {
 				System.out.println("Writing dataset as separate files. Ignoring irrelevant parameters.");
 				writeDatasetAsFiles(configuration, engine);
 			} else {
-				System.out.println("Writing dataset to one RDf file. Ignoring irrelevant parameters.");
+				System.out.println("Writing dataset to one RDF file. Ignoring irrelevant parameters.");
 				writeDatasetAsFile(configuration, engine);
 			}
 		} catch (Exception e) {
@@ -89,6 +89,7 @@ public class Main {
 			}
 		} catch (Exception e) {
 			System.out.println("Something went wrong fetching prefixes from a file.");
+			System.out.println("The error is: " + e);
 			System.out.println("We are not aborting the process, but we are aborting the prefix mappings.");
 		}
 	}
