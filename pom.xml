@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>r2rml</groupId>
 	<artifactId>r2rml</artifactId>
-	<version>1.2.3b</version>
+	<version>1.2.3c</version>
 	<name>R2RML Implementation</name>
 
 	<properties>
@@ -12,12 +12,8 @@
 	</properties>
 
 	<!-- disabled apache drill because of some broken dependencies -->
-	<!-- repositories>
-		<repository>
-			<id>dremio-free</id>
-			<url>https://maven.dremio.com/free/</url>
-		</repository>
-	</repositories -->
+	<!-- repositories> <repository> <id>dremio-free</id> <url>https://maven.dremio.com/free/</url> 
+		</repository> </repositories -->
 
 	<build>
 		<finalName>r2rml</finalName>
@@ -131,6 +127,11 @@
 			<version>1.3.1</version>
 		</dependency>
 		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>9.2.1.jre8</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
 			<version>3.13.0</version>
@@ -178,11 +179,8 @@
 			<version>12.1.0.2</version>
 		</dependency>
 		<!-- disabled apache drill because of some broken dependencies -->
-		<!-- dependency>
-			<groupId>org.apache.drill.exec</groupId>
-			<artifactId>drill-jdbc</artifactId>
-			<version>1.18.0</version>
-		</dependency -->
+		<!-- dependency> <groupId>org.apache.drill.exec</groupId> <artifactId>drill-jdbc</artifactId> 
+			<version>1.18.0</version> </dependency -->
 		<!-- h2 allows us to create tables from CSV files in an easy way -->
 		<dependency>
 			<groupId>com.h2database</groupId>
