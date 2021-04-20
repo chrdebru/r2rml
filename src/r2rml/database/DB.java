@@ -19,7 +19,6 @@ import r2rml.engine.R2RMLException;
 public class DB {
 
 	private Connection connection = null;
-	//private List<Statement> statements = new ArrayList<Statement>();
 	private Map<Rows, Statement> statements = new HashMap<Rows, Statement>();
 	
 	public DB(Connection connection) {
