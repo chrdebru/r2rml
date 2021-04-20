@@ -66,8 +66,10 @@ public class PredicateMap extends TermMap {
 	
 	public Property generateRDFTerm(Row row) throws R2RMLException {
 		// PredicateMaps generate terms that are properties.
-		String uri = super.generateRDFTerm(row).asResource().getURI();
-		return ResourceFactory.createProperty(uri);
+		RDFNode node = super.generateRDFTerm(row);
+		if(node != null)
+			return ResourceFactory.createProperty(node.asResource().getURI());
+		return null;
 	}
 
 }
