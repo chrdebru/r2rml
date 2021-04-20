@@ -1,0 +1,36 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix ex: <http://example.com/ns#> .
+
+<#TriplesMap1>
+    rr:logicalTable [ rr:sqlQuery "SELECT *, 'http://example.com/ns#' || RELATION || '2' AS RELATION2 FROM EMP2;" ];
+    rr:subjectMap [
+        rr:template "http://data.example.com/person/{PERSON}";
+        rr:class ex:Person;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:name;
+        rr:objectMap [ rr:column "PERSON" ];
+    ];
+    rr:predicateObjectMap [
+    	rr:predicateMap [ rr:template "http://example.com/ns#{RELATION}" ] ;
+    	rr:predicateMap [ rr:column "RELATION2" ] ;
+	    rr:objectMap [
+	        rr:parentTriplesMap <#TriplesMap2>;
+	        rr:joinCondition [
+	            rr:child "OTHER";
+	            rr:parent "OTHER";
+	        ];
+	    ];
+	].
+    
+<#TriplesMap2>
+    rr:logicalTable [ rr:tableName "EMP2" ];
+    rr:subjectMap [
+        rr:template "http://data.example.com/person/{OTHER}";
+        rr:class ex:Person;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:name;
+        rr:objectMap [ rr:column "OTHER" ];
+    ].
+	

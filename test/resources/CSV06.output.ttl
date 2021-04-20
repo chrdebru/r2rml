@@ -1,0 +1,8 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ex: <http://example.com/ns#> .
+<http://data.example.com/person/PETER> rdf:type ex:Person ; ex:name "PETER".
+<http://data.example.com/person/LOIS> rdf:type ex:Person ; ex:name "LOIS".
+<http://data.example.com/person/CHRISTOPHE> rdf:type ex:Person ; ex:name "CHRISTOPHE".
+<http://data.example.com/person/MEG> rdf:type ex:Person ; ex:name "MEG".
+<http://data.example.com/person/PETER> ex:WIFE <http://data.example.com/person/LOIS>.
+<http://data.example.com/person/PETER> ex:WIFE2 <http://data.example.com/person/LOIS>.
