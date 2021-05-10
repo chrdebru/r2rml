@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import r2rml.engine.R2RMLException;
 
 /**
@@ -25,8 +27,13 @@ public class Row {
 
 	public Object getObject(String column) throws R2RMLException {
 		try {
-			Integer index = indexMap.get(column);
+			String columnname = StringEscapeUtils.unescapeJava(column);
+			Integer index = indexMap.get(columnname);
 			// Check whether the user added the right column names in the mappings
+			if(index == null)
+				// Now try without quotes
+				index = indexMap.get(columnname.replace("\"", ""));
+			
 			if(index == null)
 				throw new R2RMLException("Column '" +  column + "' does not exit in the logical table.", null);
 			return resultset.getObject(index);

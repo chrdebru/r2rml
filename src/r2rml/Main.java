@@ -53,7 +53,7 @@ public class Main {
 			}
 
 			R2RMLProcessor engine = new R2RMLProcessor(configuration);
-			engine.execute();
+			int exit = engine.execute();
 			
 			// if there is a problem with this method, we do not throw an exception but abort the process.
 			if(configuration.getPrefixFile() != null) {
@@ -72,6 +72,8 @@ public class Main {
 				System.out.println("Writing dataset to one RDF file. Ignoring irrelevant parameters.");
 				writeDatasetAsFile(configuration, engine);
 			}
+			
+			System.exit(exit);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			System.exit(-1);

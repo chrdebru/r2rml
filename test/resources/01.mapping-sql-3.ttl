@@ -2,15 +2,15 @@
 @prefix ex: <http://example.com/ns#> .
 
 <#TriplesMap1>
-    rr:logicalTable [ rr:tableName "EMP" ];
+    rr:logicalTable [ rr:sqlQuery """SELECT * FROM "EMP" WHERE TRUE""" ];
     rr:subjectMap [
-        rr:template "http://data.example.com/employee/{EMPNO}";
+        rr:template """http://data.example.com/employee/{"EMPNO"}""";
         rr:class ex:Employee;
     ];
     rr:predicateObjectMap [
         rr:predicate ex:name;
-        rr:objectMap [ rr:column "ENAME" ];
+        rr:objectMap [ rr:column """ENAME""" ];
     ].
 	
 <#a> rr:objectMap <#b> .
-<#b> rr:column "ENAME" .
+<#b> rr:column "\"ENAME\"" .

@@ -1,5 +1,6 @@
 package r2rml.model;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.regex.Pattern;
 
 import javax.script.ScriptException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.enhanced.UnsupportedPolymorphismException;
@@ -123,7 +125,7 @@ public abstract class TermMap extends R2RMLResource {
 			functionCall = distillFunction(functions.get(0).getObject());
 			if(functionCall == null)
 				return false;
-			
+
 			// Check whether the referenced column names are valid
 			for(String columnName : getReferencedColumns()) {
 				if(!R2RMLUtil.isValidColumnName(columnName)) {
@@ -166,17 +168,17 @@ public abstract class TermMap extends R2RMLResource {
 			logger.error("FunctionCall cannot be a literal.");
 			return null;
 		}
-		
+
 		// fcn stands for Function Call Node
 		Resource fcn = node.asResource();
-		
+
 		List<Statement> functions = fcn.listProperties(RRF.function).toList();
 		if(functions.size() != 1) {
 			logger.error("Function valued TermMap must have exactly one rrf:function.");
 			logger.error(description);
 			return null;
 		}
-		
+
 		// Process the function, get the function name and then the parameters
 		RDFNode f = functions.get(0).getObject();
 		String functionname = JSEnv.registerFunction(f);
@@ -184,14 +186,14 @@ public abstract class TermMap extends R2RMLResource {
 			// Something went wrong, reported by the function. 
 			return null;
 		}
-		
+
 		List<Statement> pbindings = fcn.listProperties(RRF.parameterBindings).toList();
 		if(pbindings.size() != 1) {
 			logger.error("Function valued TermMap must have exactly one rrf:parameterBindings.");
 			logger.error(description);
 			return null;
 		}
-		
+
 		RDFList list = null;
 		try {
 			list = pbindings.get(0).getObject().as(RDFList.class);
@@ -200,9 +202,9 @@ public abstract class TermMap extends R2RMLResource {
 			logger.error(description);
 			return null;
 		}
-		
+
 		functionCall = new FunctionCall(functionname);
-		
+
 		ExtendedIterator<RDFNode> iter = list.iterator();
 		while(iter.hasNext()) {
 			RDFNode param = iter.next();
@@ -220,7 +222,7 @@ public abstract class TermMap extends R2RMLResource {
 				return null;
 			}
 		}
-		
+
 		return functionCall;
 	}
 
@@ -256,13 +258,12 @@ public abstract class TermMap extends R2RMLResource {
 		Set<String> set = new HashSet<String>();
 		if(isColumnValuedTermMap()) {
 			// Singleton
-			set.add(column);
+			set.add(StringEscapeUtils.unescapeJava(column));
 		} else if(isTemplateValuedTermMap()) {
-			// Little hack to "ignore" escaped curly braces.
-			String temp = template.replace("\\{", "--").replace("\\}", "--");
-			Matcher m = Pattern.compile("\\{([^}]+)\\}").matcher(temp);
+			Matcher m = Pattern.compile("(?<!\\\\)\\{(.+?)(?<!\\\\)\\}").matcher(template);
 			while(m.find()) {
-				set.add(template.substring(m.start(1), m.end(1)));
+				String temp = template.substring(m.start(1), m.end(1));
+				set.add(StringEscapeUtils.unescapeJava(temp));
 			}
 		} else if(isFunctionValuedTermMap()) {
 			for(TermMap tm : functionCall.getTermMaps()) {
@@ -294,7 +295,7 @@ public abstract class TermMap extends R2RMLResource {
 	public boolean isConstantValuedTermMap() {
 		return constant != null;
 	}
-	
+
 	public boolean isFunctionValuedTermMap() {
 		return functionCall != null;
 	}
@@ -326,13 +327,13 @@ public abstract class TermMap extends R2RMLResource {
 			IRI iri = IRIFactory.iriImplementation().create(value.toString());
 			if(iri.isAbsolute())
 				return ResourceFactory.createResource(iri.toString());
-			
+
 			iri = IRIFactory.iriImplementation().create(baseIRI + value);
 			if(iri.isAbsolute())
 				return ResourceFactory.createResource(iri.toString());
-			
+
 			throw new R2RMLException("Data error. " + baseIRI + value + " is not a valid absolute IRI", null);
-			
+
 		}
 		/*
 		 * Otherwise, if the term type is rr:BlankNode: Return a blank node 
@@ -372,36 +373,39 @@ public abstract class TermMap extends R2RMLResource {
 			if(value instanceof Literal) {
 				return (Literal) value ;
 			}
-			return ResourceFactory.createTypedLiteral(value);
+			
+			// TODO: Ensure integers are mapped onto xsd:integer, but there must be a more elegant way than via a string...
+			if(value instanceof Integer)
+				value = new BigInteger(value.toString());
+			
+			Literal x = ResourceFactory.createTypedLiteral(value);
+			return x;
 		}
 		return null;
-		
+
 	}
 
 	private Object getValueForRDFTerm(Row row) throws R2RMLException {
 		if(isConstantValuedTermMap()) {
 			return constant;
 		} else if(isColumnValuedTermMap()) {
-			return row.getObject(column);
+			return row.getObject(StringUtils.strip(column, "\""));
 		} else if(isTemplateValuedTermMap()) {
 			String value = new String(template);
 			for(String reference : getReferencedColumns()) {
-				Object object = row.getObject(reference);
+				Object object = row.getObject(StringUtils.strip(reference, "\""));
 				// If one of the values is NULL, we don't generate the term.
 				if(object == null)
 					return null;
+
 				// If the term type is rr:IRI, then replace the pair of curly braces with an IRI-safe 
 				// version of value; otherwise, replace the pair of curly braces with value				
 				String string = object.toString();
 				if(isTermTypeIRI())
 					string = IRISafe.toIRISafe(string);
-				
-				// first argument is a regular expression, therefore we
-				// have to escape the curly braces, but in a string that
-				// also means escaping the escape character.
-				value = value.replaceAll("\\{" + reference + "\\}", string);
+
+				value = StringUtils.replace(value, "{" + StringEscapeUtils.escapeJava(reference) + "}", string);
 			}
-			// Unescape all the values!
 			value = StringEscapeUtils.unescapeJava(value);
 			return value;
 		} else if (isFunctionValuedTermMap()) {

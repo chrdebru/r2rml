@@ -35,7 +35,7 @@ public class R2RMLProcessor {
 		this.configuration = configuration;
 	}
 
-	public void execute() {
+	public int execute() {
 		createDatabaseConnection();
 		
 		String file = configuration.getMappingFile();
@@ -57,7 +57,10 @@ public class R2RMLProcessor {
 
 		if(abort) {
 			logger.error("We had to abort generation of triples. See log for details.");
+			return -1;
 		}
+		
+		return 0;
 	}
 
 	private void createDatabaseConnection() {

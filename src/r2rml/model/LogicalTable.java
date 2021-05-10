@@ -2,6 +2,7 @@ package r2rml.model;
 
 import java.util.List;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
@@ -109,8 +110,8 @@ public class LogicalTable extends R2RMLResource {
 
 	public String generateQuery() {
 		if(sqlQuery != null) 
-			return sqlQuery;
-		return "SELECT * FROM " + tableName;
+			return StringEscapeUtils.unescapeJava(sqlQuery);
+		return "SELECT * FROM " + StringEscapeUtils.unescapeJava(tableName);
 	}
 
 }
