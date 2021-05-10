@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 
 import junit.framework.TestCase;
-import r2rml.Main;
 import r2rml.engine.Configuration;
 import r2rml.engine.R2RMLException;
 import r2rml.engine.R2RMLProcessor;
@@ -250,26 +249,6 @@ public class TestR2RML extends TestCase {
 		assertEquals("output.ttl", configuration.getOutputFile());
 		assertEquals("TURTLE", configuration.getFormat());
 		assertEquals("http://www.example.org/", configuration.getBaseIRI());
-	}
-	
-	public void testExample12() throws R2RMLException {
-		Main.main(new String[] { "./test/resources/12.config.properties" });
-		Model output = ModelFactory.createDefaultModel();
-		output.read("./test/resources/12.output.ttl");
-		Model compare = ModelFactory.createDefaultModel();
-		compare.read("./test/resources/12.compareoutput.ttl", "TURTLE");
-		assertEquals(true, output.difference(compare).isEmpty());
-		assertEquals(true, compare.difference(output).isEmpty());
-	}
-	
-	public void testExample13() throws R2RMLException {
-		Main.main(new String[] { "./test/resources/13.config.properties" });
-		// Model output = ModelFactory.createDefaultModel();
-		// output.read("./test/resources/13.output.ttl");
-		// Model compare = ModelFactory.createDefaultModel();
-		// compare.read("./test/resources/12.compareoutput.ttl", "TURTLE");
-		// assertEquals(true, output.difference(compare).isEmpty());
-		// assertEquals(true, compare.difference(output).isEmpty());
 	}
 	
 	/**

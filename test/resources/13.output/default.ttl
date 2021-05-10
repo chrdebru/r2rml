@@ -1,2 +1,0 @@
-<http://data.example.com/employee/7369>
-        a       <http://example.com/ns#Employee> .
