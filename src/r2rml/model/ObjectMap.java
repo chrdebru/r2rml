@@ -67,7 +67,7 @@ public class ObjectMap extends TermMap {
 
 			if(languages.size() == 1) {
 				RDFNode node = languages.get(0).getObject();
-				if(!node.isLiteral() && !LangTag.check(node.asLiteral().getValue().toString())) {
+				if(!node.isLiteral() || !LangTag.check(node.asLiteral().getValue().toString())) {
 					logger.error("The value of rr:language must be a valid language tag.");
 					logger.error(description);
 					return false;
