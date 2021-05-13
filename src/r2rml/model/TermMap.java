@@ -1,6 +1,7 @@
 package r2rml.model;
 
-import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import javax.script.ScriptException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.enhanced.UnsupportedPolymorphismException;
 import org.apache.jena.graph.Node;
 import org.apache.jena.iri.IRI;
@@ -359,20 +361,23 @@ public abstract class TermMap extends R2RMLResource {
 				x = ResourceFactory.createTypedLiteral(value.toString(), d);
 			} else {
 				// TODO: Ensure integers are mapped onto xsd:integer, but there must be a more elegant way than via a string...
-				if(value instanceof Integer || value instanceof Long)
-					value = new BigInteger(value.toString());
-				if(value instanceof Float)
-					value = new Double(value.toString());
-
 				// TODO: Isn't there a more elegant way to create canonical forms of values?
-				x = ResourceFactory.createTypedLiteral(value);
+
+				if(value instanceof Integer || value instanceof Long)
+					x = ResourceFactory.createTypedLiteral(value.toString(), XSDDatatype.XSDinteger);
+				else if(value instanceof Float)
+					x = ResourceFactory.createTypedLiteral(value.toString(), XSDDatatype.XSDdouble);
+				else if(value instanceof Date)
+					x = ResourceFactory.createTypedLiteral(value.toString(), XSDDatatype.XSDdate);
+				else if(value instanceof Timestamp)
+					x = ResourceFactory.createTypedLiteral(value.toString().replace(" ", "T"), XSDDatatype.XSDdateTime);
+				else 
+					x = ResourceFactory.createTypedLiteral(value);
 			}
 			
 			Node n = CanonicalizeLiteral.canonicalValue(x.asNode());
 			x = ResourceFactory.createTypedLiteral(n.getLiteralLexicalForm(), d != null ? d : x.getDatatype());
-			
-			System.out.println(x.getLanguage());
-			
+						
 			return x;
 		}
 		return null;
