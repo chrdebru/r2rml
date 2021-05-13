@@ -100,9 +100,6 @@ public class TestSQL extends TestCase {
 		Model model = engine.getDataset().getDefaultModel();
 		Model target = ModelFactory.createDefaultModel();
 		target.read("./test/resources/01.output.ttl");
-		model.write(System.err);
-		System.out.println();
-		target.write(System.err);
 		assertEquals(true, model.difference(target).isEmpty());
 		assertEquals(true, target.difference(model).isEmpty());	
 	}
@@ -116,9 +113,6 @@ public class TestSQL extends TestCase {
 		Model model = engine.getDataset().getDefaultModel();
 		Model target = ModelFactory.createDefaultModel();
 		target.read("./test/resources/01.output.ttl");
-		model.write(System.err);
-		System.out.println();
-		target.write(System.err);
 		assertEquals(true, model.difference(target).isEmpty());
 		assertEquals(true, target.difference(model).isEmpty());	
 	}
@@ -132,9 +126,6 @@ public class TestSQL extends TestCase {
 		Model model = engine.getDataset().getDefaultModel();
 		Model target = ModelFactory.createDefaultModel();
 		target.read("./test/resources/01.output.ttl");
-		model.write(System.err);
-		System.out.println();
-		target.write(System.err);
 		assertEquals(true, model.difference(target).isEmpty());
 		assertEquals(true, target.difference(model).isEmpty());	
 	}
