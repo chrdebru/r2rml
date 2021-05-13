@@ -55,9 +55,6 @@ public class Main {
 			R2RMLProcessor engine = new R2RMLProcessor(configuration);
 			int exit = engine.execute();
 			
-			if(exit != 0)
-				System.exit(exit);
-			
 			// if there is a problem with this method, we do not throw an exception but abort the process.
 			if(configuration.getPrefixFile() != null) {
 				addPrefixMappingFromFileToGraphs(configuration.getPrefixFile(), engine);
