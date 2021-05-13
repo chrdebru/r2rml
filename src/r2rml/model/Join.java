@@ -46,12 +46,6 @@ public class Join extends R2RMLResource {
 		}
 
 		child = node.asLiteral().getValue().toString();
-
-		if(!R2RMLUtil.isValidColumnName(child)) {
-			logger.error("rr:child is not a valid column name.");
-			logger.error(description);
-			return false;
-		}
 		
 		list = description.listProperties(R2RML.parent).toList();
 		if(list.size() != 1) {
@@ -68,12 +62,6 @@ public class Join extends R2RMLResource {
 		}
 
 		parent = node.asLiteral().getValue().toString();
-
-		if(!R2RMLUtil.isValidColumnName(parent)) {
-			logger.error("rr:parent is not a valid column name.");
-			logger.error(description);
-			return false;
-		}
 
 		return true;
 	}
