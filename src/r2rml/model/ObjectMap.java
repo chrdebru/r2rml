@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.riot.web.LangTag;
 import org.apache.log4j.Logger;
 
 import r2rml.engine.R2RML;
@@ -42,7 +43,7 @@ public class ObjectMap extends TermMap {
 			logger.error(description);
 			return false;
 		}
-
+		
 		if(isTermTypeLiteral()) {
 			if(datatypes.size() > 1) {
 				logger.error("A TermMap must not have more than one rr:datatype value.");
@@ -66,7 +67,7 @@ public class ObjectMap extends TermMap {
 
 			if(languages.size() == 1) {
 				RDFNode node = languages.get(0).getObject();
-				if(!R2RMLUtil.isValidLanguageTag(node)) {
+				if(!node.isLiteral() && !LangTag.check(node.asLiteral().getValue().toString())) {
 					logger.error("The value of rr:language must be a valid language tag.");
 					logger.error(description);
 					return false;

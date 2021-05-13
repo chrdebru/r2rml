@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.RDF;
 import org.apache.log4j.Logger;
 
 import r2rml.engine.R2RML;
@@ -119,8 +120,10 @@ public class PredicateObjectMap extends R2RMLResource {
 			boolean isOM = r.hasProperty(R2RML.column) 
 					|| r.hasProperty(R2RML.constant) 
 					|| r.hasProperty(R2RML.template)
-					|| r.hasProperty(RRF.functionCall);
-			boolean isROM = r.hasProperty(R2RML.joinCondition);
+					|| r.hasProperty(RRF.functionCall)
+					|| r.hasProperty(RDF.type, R2RML.ObjectMap);
+			boolean isROM = r.hasProperty(R2RML.joinCondition) 
+					|| r.hasProperty(RDF.type, R2RML.RefObjectMap);
 
 			// If it plays the roles of a OM, create OM
 			if(isOM && !isROM) {

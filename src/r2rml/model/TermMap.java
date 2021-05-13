@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.enhanced.UnsupportedPolymorphismException;
+import org.apache.jena.graph.Node;
 import org.apache.jena.iri.IRI;
 import org.apache.jena.iri.IRIFactory;
 import org.apache.jena.rdf.model.Literal;
@@ -24,6 +25,8 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.riot.process.normalize.CanonicalizeLiteral;
+import org.apache.jena.riot.web.LangTag;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.XSD;
 import org.apache.log4j.Logger;
@@ -106,15 +109,6 @@ public abstract class TermMap extends R2RMLResource {
 				logger.error(description);
 				return false;
 			}
-
-			// Check whether the referenced column names are valid
-			for(String columnName : getReferencedColumns()) {
-				if(!R2RMLUtil.isValidColumnName(columnName)) {
-					logger.error("Invalid column name in rr:template: " + columnName);
-					logger.error(description);
-					return false;
-				}
-			}
 		} else if(constants.size() == 1) {
 			// the check for ConstantValuedTermMaps are local (different rules
 			// for different TermMaps.
@@ -125,15 +119,6 @@ public abstract class TermMap extends R2RMLResource {
 			functionCall = distillFunction(functions.get(0).getObject());
 			if(functionCall == null)
 				return false;
-
-			// Check whether the referenced column names are valid
-			for(String columnName : getReferencedColumns()) {
-				if(!R2RMLUtil.isValidColumnName(columnName)) {
-					logger.error("Invalid column name in rrf:functionCall " + columnName);
-					logger.error(description);
-					return false;
-				}
-			}
 		}
 
 		// Validity of the termType is also local. 
@@ -279,8 +264,6 @@ public abstract class TermMap extends R2RMLResource {
 		if(!node.asLiteral().getDatatype().getURI().equals(XSD.xstring.getURI()))
 			return null;
 		String s = node.asLiteral().toString();
-		if(!R2RMLUtil.isValidColumnName(s))
-			return null;
 		return s;
 	}
 
@@ -358,27 +341,38 @@ public abstract class TermMap extends R2RMLResource {
 		 *    the term map's implicit SQL datatype, then return the datatype-
 		 *    override RDF literal corresponding to value and the specified 
 		 *    datatype.
-		 *    Otherwise, return the natural RDF literal corresponding to value.
-		 *    
-		 *    // TODO: we use Jena's converter...
+		 *    Otherwise, return the natural RDF literal corresponding to value.    
 		 */
 		else if(isTermTypeLiteral()) {
+			Literal x = null;
+			RDFDatatype d = datatype != null ? R2RMLTypeMapper.getTypeByName(datatype) : null;
+
 			if(language != null) {
-				return ResourceFactory.createLangLiteral(value.toString(), language);
+				return ResourceFactory.createLangLiteral(value.toString(), LangTag.canonical(language));
 			}
-			if(datatype != null) {
-				RDFDatatype d = R2RMLTypeMapper.getTypeByName(datatype);
-				return ResourceFactory.createTypedLiteral(value.toString(), d);
-			}
+			
 			if(value instanceof Literal) {
 				return (Literal) value ;
+			} 
+			
+			if(datatype != null) {
+				x = ResourceFactory.createTypedLiteral(value.toString(), d);
+			} else {
+				// TODO: Ensure integers are mapped onto xsd:integer, but there must be a more elegant way than via a string...
+				if(value instanceof Integer || value instanceof Long)
+					value = new BigInteger(value.toString());
+				if(value instanceof Float)
+					value = new Double(value.toString());
+
+				// TODO: Isn't there a more elegant way to create canonical forms of values?
+				x = ResourceFactory.createTypedLiteral(value);
 			}
 			
-			// TODO: Ensure integers are mapped onto xsd:integer, but there must be a more elegant way than via a string...
-			if(value instanceof Integer)
-				value = new BigInteger(value.toString());
+			Node n = CanonicalizeLiteral.canonicalValue(x.asNode());
+			x = ResourceFactory.createTypedLiteral(n.getLiteralLexicalForm(), d != null ? d : x.getDatatype());
 			
-			Literal x = ResourceFactory.createTypedLiteral(value);
+			System.out.println(x.getLanguage());
+			
 			return x;
 		}
 		return null;

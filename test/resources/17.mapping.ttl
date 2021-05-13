@@ -1,0 +1,17 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix ex: <http://example.com/ns#> .
+
+<#TriplesMap1>
+    rr:logicalTable [ rr:tableName "EMP" ];
+    rr:subjectMap [
+        rr:template "http://data.example.com/employee/{EMPNO}";
+        rr:class ex:Employee;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:name;
+        # In canonical form, the language should be en-EN
+        rr:objectMap [ rr:column "ENAME" ; rr:language "EN-en" ];
+    ].
+	
+<#a> rr:objectMap <#b> .
+<#b> rr:column "ENAME" .

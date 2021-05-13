@@ -267,5 +267,45 @@ public class TestR2RML extends TestCase {
 		assertEquals(true, model.difference(target).isEmpty());
 		assertEquals(true, target.difference(model).isEmpty());	
 	}
+	
+	/**
+	 * Testing disconnected refobjectmaps
+	 * @throws R2RMLException
+	 */
+	public void testExample16() throws R2RMLException {
+		Configuration configuration = new Configuration();
+		configuration.setMappingFile("./test/resources/16.mapping.ttl");
+		configuration.setConnectionURL(connectionURL);
+		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+		engine.execute();
+		Model model = engine.getDataset().getDefaultModel();
+		Model target = ModelFactory.createDefaultModel();
+		target.read("./test/resources/03.output.ttl");
+		assertEquals(true, model.difference(target).isEmpty());
+		assertEquals(true, target.difference(model).isEmpty());	
+	}
+	
+	/**
+	 * Testing disconnected refobjectmaps
+	 * @throws R2RMLException
+	 */
+	public void testExample17() throws R2RMLException {
+		Configuration configuration = new Configuration();
+		configuration.setMappingFile("./test/resources/17.mapping.ttl");
+		configuration.setConnectionURL(connectionURL);
+		R2RMLProcessor engine = new R2RMLProcessor(configuration);
+		engine.execute();
+		Model model = engine.getDataset().getDefaultModel();
+		Model target = ModelFactory.createDefaultModel();
+		target.read("./test/resources/17.output.ttl");
+		
+		
+		model.write(System.err);
+		System.out.println();
+		target.write(System.err);
+		
+		assertEquals(true, model.difference(target).isEmpty());
+		assertEquals(true, target.difference(model).isEmpty());	
+	}
 
 }

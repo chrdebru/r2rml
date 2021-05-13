@@ -231,11 +231,15 @@ public class TriplesMap extends R2RMLResource {
 						return false;
 
 					Rows rows2 = database.getRows(jointQuery);
-					int column_count = rows2.getColumnCount();
+					int column_count = rows2.getColumnCount();					
+					
+					int parent_start = rof.getJoins().size() == 0 ? 1 : child_column_count + 1;
+					int parent_end = rof.getJoins().size() == 0 ? child_column_count : column_count;
+					
 					// For each row in rows2...
 					while(rows2.nextRow() != null) {
 						Row child_row = rows2.projectCurrentRow(1, child_column_count);
-						Row parent_row = rows2.projectCurrentRow(child_column_count + 1, column_count);
+						Row parent_row = rows2.projectCurrentRow(parent_start, parent_end);
 
 						// Let subject be the generated RDF term that results 
 						// from applying sm to "child_row"
