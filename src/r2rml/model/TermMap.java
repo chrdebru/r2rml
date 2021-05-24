@@ -300,7 +300,7 @@ public abstract class TermMap extends R2RMLResource {
 	public boolean isTermTypeLiteral() {
 		return getTermType().getURI().equals(R2RML.LITERAL.getURI());
 	}
-
+	
 	public RDFNode generateRDFTerm(Row row) throws R2RMLException {
 		Object value = getValueForRDFTerm(row);
 		// If value is NULL, then no RDF term is generated.
@@ -313,8 +313,10 @@ public abstract class TermMap extends R2RMLResource {
 			if(iri.isAbsolute())
 				return ResourceFactory.createResource(iri.toString());
 
-			iri = IRIFactory.iriImplementation().create(baseIRI + value);
-			if(iri.isAbsolute())
+			iri = IRIFactory.iriImplementation().create(baseIRI + value.toString());
+			
+			// iri.isAbsolute allows spaces, use Jena's IRIFactory to check whether the IRI is valid
+			if(iri.isAbsolute() && !iri.hasViolation(true))
 				return ResourceFactory.createResource(iri.toString());
 
 			throw new R2RMLException("Data error. " + baseIRI + value + " is not a valid absolute IRI", null);
