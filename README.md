@@ -1,4 +1,4 @@
-# R2RML Implementation
+# R2RML-F: an R2RML Implementation
 
 ## Building and using the code
 
