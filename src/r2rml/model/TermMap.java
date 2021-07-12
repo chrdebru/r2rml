@@ -360,6 +360,9 @@ public abstract class TermMap extends R2RMLResource {
 			} 
 			
 			if(datatype != null) {
+				if(datatype.getURI().equals(XSDDatatype.XSDdateTime.getURI()))
+					value = value.toString().replace(" ", "T");
+				
 				x = ResourceFactory.createTypedLiteral(value.toString(), d);
 			} else {
 				// TODO: Ensure integers are mapped onto xsd:integer, but there must be a more elegant way than via a string...
@@ -379,7 +382,7 @@ public abstract class TermMap extends R2RMLResource {
 			
 			Node n = CanonicalizeLiteral.canonicalValue(x.asNode());
 			x = ResourceFactory.createTypedLiteral(n.getLiteralLexicalForm(), d != null ? d : x.getDatatype());
-						
+									
 			return x;
 		}
 		return null;
