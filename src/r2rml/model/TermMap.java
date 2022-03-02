@@ -31,7 +31,8 @@ import org.apache.jena.riot.process.normalize.CanonicalizeLiteral;
 import org.apache.jena.riot.web.LangTag;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.XSD;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import r2rml.database.Row;
 import r2rml.engine.R2RML;
@@ -50,7 +51,7 @@ import r2rml.util.IRISafe;
  */
 public abstract class TermMap extends R2RMLResource {
 
-	private static Logger logger = Logger.getLogger(TermMap.class.getName());
+	private static Logger logger = LogManager.getLogger(TermMap.class);
 	private Resource termType = null;
 
 	/* 

@@ -4,7 +4,8 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import r2rml.database.Row;
 import r2rml.engine.R2RML;
@@ -19,7 +20,7 @@ import r2rml.engine.R2RMLException;
  */
 public class PredicateMap extends TermMap {
 
-	private static Logger logger = Logger.getLogger(PredicateMap.class.getName());
+	private static Logger logger = LogManager.getLogger(PredicateMap.class);
 
 	public PredicateMap(Resource description, String baseIRI) {
 		super(description, baseIRI);

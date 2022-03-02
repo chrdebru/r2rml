@@ -6,7 +6,8 @@ import java.util.List;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.vocabulary.RDF;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import r2rml.engine.R2RML;
 import r2rml.engine.RRF;
@@ -20,7 +21,7 @@ import r2rml.engine.RRF;
  */
 public class PredicateObjectMap extends R2RMLResource {
 
-	private static Logger logger = Logger.getLogger(PredicateObjectMap.class.getName());
+	private static Logger logger = LogManager.getLogger(PredicateObjectMap.class);
 
 	private List<GraphMap> graphMaps = new ArrayList<GraphMap>();
 	private List<PredicateMap> predicateMaps = new ArrayList<PredicateMap>();

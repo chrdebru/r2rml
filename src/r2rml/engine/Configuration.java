@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Configuration Class.
@@ -19,7 +20,7 @@ import org.apache.log4j.Logger;
  */
 public class Configuration {
 	
-	private static Logger logger = Logger.getLogger(Configuration.class.getName());
+	private static Logger logger = LogManager.getLogger(Configuration.class);
 	
 	private String connectionURL = null;
 	private String user = null;

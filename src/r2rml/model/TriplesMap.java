@@ -12,7 +12,8 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.vocabulary.RDF;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import r2rml.database.DB;
 import r2rml.database.Row;
@@ -29,7 +30,7 @@ import r2rml.engine.R2RMLException;
  */
 public class TriplesMap extends R2RMLResource {
 
-	private static Logger logger = Logger.getLogger(TriplesMap.class.getName());
+	private static Logger logger = LogManager.getLogger(TriplesMap.class);
 
 	private LogicalTable logicalTable = null;
 	private SubjectMap subjectMap = null;

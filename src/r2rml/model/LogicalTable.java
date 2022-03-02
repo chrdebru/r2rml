@@ -8,7 +8,8 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.XSD;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import r2rml.engine.R2RML;
 
@@ -21,7 +22,7 @@ import r2rml.engine.R2RML;
  */
 public class LogicalTable extends R2RMLResource {
 
-	private static Logger logger = Logger.getLogger(LogicalTable.class.getName());
+	private static Logger logger = LogManager.getLogger(LogicalTable.class);
 
 	private String tableName = null;
 	private String sqlQuery = null;

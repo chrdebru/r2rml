@@ -6,7 +6,8 @@ import java.util.List;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import r2rml.engine.R2RML;
 
@@ -19,7 +20,7 @@ import r2rml.engine.R2RML;
  */
 public class RefObjectMap extends R2RMLResource {
 	
-	private static Logger logger = Logger.getLogger(RefObjectMap.class.getName());
+	private static Logger logger = LogManager.getLogger(RefObjectMap.class);
 
 	private List<Join> joins = new ArrayList<Join>();
 	

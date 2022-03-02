@@ -12,7 +12,8 @@ import javax.script.ScriptException;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import r2rml.engine.RRF;
 
@@ -25,10 +26,10 @@ import r2rml.engine.RRF;
  */
 public class JSEnv {
 
-	private static Logger logger = Logger.getLogger(JSEnv.class.getName());
+	private static Logger logger = LogManager.getLogger(JSEnv.class);
 	
 	private static ScriptEngineManager manager = new ScriptEngineManager();
-	private static ScriptEngine engine = manager.getEngineByName("javascript");
+	private static ScriptEngine engine = manager.getEngineByName("nashorn");
 	
 	private static Map<Resource, String> nameMap = new HashMap<Resource, String>();
 

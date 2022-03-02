@@ -2,7 +2,8 @@ package r2rml.model;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import r2rml.database.Row;
 import r2rml.engine.R2RML;
@@ -17,7 +18,7 @@ import r2rml.engine.R2RMLException;
  */
 public class GraphMap extends TermMap {
 
-	private static Logger logger = Logger.getLogger(GraphMap.class.getName());
+	private static Logger logger = LogManager.getLogger(GraphMap.class);
 
 	public GraphMap(Resource description, String baseIRI) {
 		super(description, baseIRI);

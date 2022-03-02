@@ -3,11 +3,12 @@ package r2rml.model;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class R2RMLUtil {
 
-	private static Logger logger = Logger.getLogger(R2RMLUtil.class.getName());
+	private static Logger logger = LogManager.getLogger(R2RMLUtil.class);
 
 	public static String createJointQuery(TriplesMap child, TriplesMap parent, List<Join> joins) {
 		// If the child query and parent query of a referencing object 

@@ -10,7 +10,8 @@ import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import r2rml.database.DB;
 import r2rml.model.R2RMLMapping;
@@ -25,7 +26,7 @@ import r2rml.model.R2RMLMappingFactory;
  */
 public class R2RMLProcessor {
 
-	private static Logger logger = Logger.getLogger(R2RMLProcessor.class.getName());
+	private static Logger logger = LogManager.getLogger(R2RMLProcessor.class);
 
 	private Configuration configuration = null;
 	private Connection connection = null;
@@ -105,7 +106,7 @@ public class R2RMLProcessor {
 		configuration.setConnectionURL(connectionURL);
 		
 		logger.info("Starting in-memory database");
-		DriverManager.getConnection(connectionURL + ";create=true").close();
+		DriverManager.getConnection(connectionURL).close();
 		
 		Connection connection = DriverManager.getConnection(connectionURL);
 		Statement statement = connection.createStatement();

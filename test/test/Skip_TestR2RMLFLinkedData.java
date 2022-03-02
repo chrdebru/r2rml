@@ -7,8 +7,11 @@ import java.sql.Statement;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.junit.BeforeClass;
 
 import junit.framework.TestCase;
@@ -24,7 +27,7 @@ import r2rml.engine.R2RMLProcessor;
  */
 public class Skip_TestR2RMLFLinkedData extends TestCase {
 
-	private static Logger logger = Logger.getLogger(Skip_TestR2RMLFLinkedData.class.getName());
+	private static Logger logger = LogManager.getLogger(Skip_TestR2RMLFLinkedData.class);
 	private static String connectionURL = "jdbc:derby:memory:testing";
 
 	public Skip_TestR2RMLFLinkedData(String testName) {
@@ -33,8 +36,8 @@ public class Skip_TestR2RMLFLinkedData extends TestCase {
 
 	@BeforeClass
 	public static void init() throws Exception {
-		// Log4J junit configuration.
-		BasicConfigurator.configure();
+		Configurator.initialize(new DefaultConfiguration());
+	    Configurator.setRootLevel(Level.INFO);
 	}
 
 	@Override

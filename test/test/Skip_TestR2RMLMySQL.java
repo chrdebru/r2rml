@@ -2,7 +2,9 @@ package test;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.junit.BeforeClass;
 
 import junit.framework.TestCase;
@@ -26,8 +28,8 @@ public class Skip_TestR2RMLMySQL extends TestCase {
 
 	@BeforeClass
 	public static void init() throws Exception {
-		// Log4J junit configuration.
-		BasicConfigurator.configure();
+		Configurator.initialize(new DefaultConfiguration());
+	    Configurator.setRootLevel(Level.INFO);
 	}
 
 	/**

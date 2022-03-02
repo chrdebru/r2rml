@@ -6,22 +6,23 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.web.LangTag;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import r2rml.engine.R2RML;
 
 /**
  * ObjectMap Class.
- * 
- * TODO: Implement inferring datatypes
- * 
+ *  
  * @author Christophe Debruyne
  * @version 0.2
  *
  */
 public class ObjectMap extends TermMap {
 
-	private static Logger logger = Logger.getLogger(ObjectMap.class.getName());
+	private static Logger logger = LogManager.getLogger(ObjectMap.class);
+	
 	private List<Statement> datatypes = null;
 	private List<Statement> languages = null;
 
