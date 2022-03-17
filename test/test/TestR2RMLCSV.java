@@ -3,8 +3,6 @@ package test;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.junit.BeforeClass;
@@ -21,9 +19,6 @@ import r2rml.engine.R2RMLProcessor;
  *
  */
 public class TestR2RMLCSV extends TestCase {
-
-	private static Logger logger = LogManager.getLogger(TestR2RMLCSV.class);
-	private static String connectionURL = "jdbc:derby:memory:testing";
 
 	public TestR2RMLCSV(String testName) {
 		super(testName);

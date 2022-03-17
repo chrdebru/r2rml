@@ -34,5 +34,21 @@ public class R2RMLUtil {
         
         return query;
 	}
+
+	public static String createJoinQuery(TriplesMap child, LogicalTable parentTable, List<Join> joins) {
+		String cquery = child.getLogicalTable().generateQuery();
+		String pquery = parentTable.generateQuery();
+		
+		// If the referencing object map has no join condition
+		if(joins.isEmpty())
+			return "SELECT * FROM (" + cquery + ") AS tmp";
+		
+		String query = "SELECT * FROM (" + cquery + ") AS child, ";
+        query += "(" + pquery + ") AS parent WHERE ";
+
+		query += joins.stream().map(join -> "child." + join.getChild() + "=parent." + join.getParent()).collect(Collectors.joining(" AND "));
+		
+        return query;
+	}
 	
 }

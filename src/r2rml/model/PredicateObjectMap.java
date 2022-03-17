@@ -27,6 +27,7 @@ public class PredicateObjectMap extends R2RMLResource {
 	private List<PredicateMap> predicateMaps = new ArrayList<PredicateMap>();
 	private List<ObjectMap> objectMaps = new ArrayList<ObjectMap>();
 	private List<RefObjectMap> refObjectMaps = new ArrayList<RefObjectMap>();
+	private List<RefObjectForLitMap> joinObjectMaps = new ArrayList<RefObjectForLitMap>();
 
 	private String baseIRI = null;
 
@@ -45,6 +46,10 @@ public class PredicateObjectMap extends R2RMLResource {
 
 	public List<RefObjectMap> getRefObjectMaps() {
 		return refObjectMaps;
+	}
+	
+	public List<RefObjectForLitMap> getJoinObjectMaps() {
+		return joinObjectMaps;
 	}
 
 	@Override
@@ -142,9 +147,10 @@ public class PredicateObjectMap extends R2RMLResource {
 			} 
 			// Can't be both!
 			else if (isOM && isROM){
-				logger.error("Resource cannot be both an ObjectMap or a RefObjectMap.");
-				logger.error(description);
-				return false;
+				RefObjectForLitMap jom = new RefObjectForLitMap(r, baseIRI);
+				if(!jom.preProcessAndValidate())
+					return false;
+				joinObjectMaps.add(jom);
 			} 
 			// Can't be neither...
 			else {

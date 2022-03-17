@@ -138,7 +138,7 @@ public class TriplesMap extends R2RMLResource {
 			DB database, 
 			Dataset dataset, 
 			Map<Resource, TriplesMap> triplesMaps) {
-		
+
 		try {
 			String query = getLogicalTable().generateQuery();
 			Rows rows = database.getRows(query);
@@ -216,7 +216,7 @@ public class TriplesMap extends R2RMLResource {
 					}
 				}
 			} // end while
-			
+
 			database.closeRows(rows);
 
 			// For each referencing object map of a predicate-object map of 
@@ -226,17 +226,17 @@ public class TriplesMap extends R2RMLResource {
 					TriplesMap ptm = triplesMaps.get(rof.getParentTriplesMap());
 					SubjectMap psm = ptm.getSubjectMap();
 					List<GraphMap> pogm = opm.getGraphMaps();
-					
+
 					String jointQuery = R2RMLUtil.createJointQuery(this, ptm, rof.getJoins());
 					if(jointQuery == null)
 						return false;
 
 					Rows rows2 = database.getRows(jointQuery);
 					int column_count = rows2.getColumnCount();					
-					
+
 					int parent_start = rof.getJoins().size() == 0 ? 1 : child_column_count + 1;
 					int parent_end = rof.getJoins().size() == 0 ? child_column_count : column_count;
-					
+
 					// For each row in rows2...
 					while(rows2.nextRow() != null) {
 						Row child_row = rows2.projectCurrentRow(1, child_column_count);
@@ -249,7 +249,7 @@ public class TriplesMap extends R2RMLResource {
 						// Let object be the generated RDF term that results 
 						// from applying psm to parent_row
 						Resource object = psm.generateRDFTerm(parent_row);
-						
+
 						// if subject or object is NULL, don't generate triples
 						if(subject != null && object != null) {
 
@@ -291,11 +291,86 @@ public class TriplesMap extends R2RMLResource {
 							}
 						}
 					}
-					
+
 					database.closeRows(rows2);
 				}
 			}
-			
+
+			// PROCESSING JOIN LITERALS
+			for(PredicateObjectMap opm : getPredicateObjectMaps()) {
+				for(RefObjectForLitMap j : opm.getJoinObjectMaps()) {
+					LogicalTable t = j.getLogicalTable();
+					List<GraphMap> pogm = opm.getGraphMaps();
+
+					String jointQuery = R2RMLUtil.createJoinQuery(this, t, j.getJoins());
+					if(jointQuery == null)
+						return false;
+
+					Rows rows2 = database.getRows(jointQuery);
+					int column_count = rows2.getColumnCount();					
+
+					int parent_start = j.getJoins().size() == 0 ? 1 : child_column_count + 1;
+					int parent_end = j.getJoins().size() == 0 ? child_column_count : column_count;
+
+					// For each row in rows2...
+					while(rows2.nextRow() != null) {
+						Row child_row = rows2.projectCurrentRow(1, child_column_count);
+						Row parent_row = rows2.projectCurrentRow(parent_start, parent_end);
+
+						// Let subject be the generated RDF term that results 
+						// from applying sm to "child_row"
+						Resource subject = getSubjectMap().generateRDFTerm(child_row);
+
+						// Let object be the generated RDF term that results 
+						// from applying psm to parent_row
+						RDFNode object = j.generateRDFTerm(parent_row);
+
+						// if subject or object is NULL, don't generate triples
+						if(subject != null && object != null) {
+
+							// Let predicates be the set of generated RDF terms that result 
+							// from applying each of the predicate-object map's predicate 
+							// maps to child_row
+							List<Property> predicates = new ArrayList<Property>();
+							for(PredicateMap pm : opm.getPredicateMaps()) {
+								Property p = pm.generateRDFTerm(child_row);
+								if(p != null)
+									predicates.add(p);
+							}
+
+							// Let subject_graphs be the set of generated RDF terms 
+							// that result from applying each graph map of sgm to 
+							// child_row
+							Set<String> subjectGraphs = new HashSet<String>();
+							for(GraphMap gm : sgm) {
+								Resource gmiri = gm.generateRDFTerm(child_row);
+								if(gmiri != null)
+									subjectGraphs.add(gmiri.getURI());
+							}
+
+							// Let predicate-object_graphs be the set of generated 
+							// RDF terms that result from applying each graph map in 
+							// pogm to child_row
+							Set<String> pogs = new HashSet<String>();
+							for(GraphMap gm : pogm) {
+								Resource gmiri = gm.generateRDFTerm(child_row);
+								if(gmiri != null)
+									pogs.add(gmiri.getURI());
+							}
+
+							// Target graphs: If sgm and pogm are empty: rr:defaultGraph; 
+							// otherwise: union of subject_graphs and predicate-object_graphs
+							pogs.addAll(subjectGraphs);
+							for(Property p : predicates) {
+								addTriplesToDataset(dataset, subject, p, object, pogs);
+							}
+						}
+					}
+
+					database.closeRows(rows2);
+				}
+			}
+
 
 			logger.info("TriplesMap " + description + ": generated triples = " + count);
 

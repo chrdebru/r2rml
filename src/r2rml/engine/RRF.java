@@ -22,5 +22,7 @@ public final class RRF {
 	public static final Property functionBody = ResourceFactory.createProperty(NS + "functionBody");
 	public static final Property functionName = ResourceFactory.createProperty(NS + "functionName");
 	public static final Property parameterBindings = ResourceFactory.createProperty(NS + "parameterBindings");
+
+	public static final Property parentLogicalTable = ResourceFactory.createProperty(NS + "parentLogicalTable");
 	
 }

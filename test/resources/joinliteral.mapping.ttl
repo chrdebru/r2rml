@@ -1,0 +1,26 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix ex: <http://example.com/ns#> .
+@prefix rrf: <http://kdeg.scss.tcd.ie/ns/rrf#> .
+
+<#TriplesMap1>
+    rr:logicalTable [ rr:tableName "TITLE" ] ;
+    rr:subjectMap [
+        rr:template "http://data.example.com/movie/{ID}" ;
+        rr:class ex:MOVIE;
+    ] ;
+    rr:predicateObjectMap [
+        rr:predicate ex:title ;
+        rr:objectMap [ rr:column "TITLE" ] ;
+    ] ;
+    
+    rr:predicateObjectMap [
+        rr:predicate ex:title ;
+        rr:objectMap [ 
+          rr:column "TITLE" ;
+          rrf:parentLogicalTable [ rr:tableName "AKA_TITLE" ] ;
+          rr:joinCondition [ rr:child "ID" ; rr:parent "MOVIE_ID" ] ;    
+        ] ;
+    ] ;
+    
+    .
+	
