@@ -48,7 +48,7 @@ public class RefObjectForLitMap extends ObjectMap {
 		
 		List<Statement> list = description.listProperties(RRF.parentLogicalTable).toList();
 		if(list.size() != 1) {
-			logger.error("RefObjectMap must have exactly one rr:parentTriplesMap.");
+			logger.error("RefObjectForLitMap must have exactly one rrf:parentLogicalTable.");
 			logger.error(description);
 			return false;
 		}
