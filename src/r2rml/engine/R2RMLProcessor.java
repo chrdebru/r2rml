@@ -47,12 +47,15 @@ public class R2RMLProcessor {
 		
 		boolean abort = false;
 		
+		long startTime = System.nanoTime();
 		if(mapping != null) {
 			if(!mapping.generateTriples(database, dataset))
 				abort = true;
 		} else {
 			abort = true;
 		}
+		long endTime = System.nanoTime();
+		System.out.println((endTime - startTime));
 		
 		closeDatabaseConnection();
 
